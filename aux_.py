@@ -16,7 +16,7 @@ from sklearn import preprocessing
 X = pd.read_csv('traindata.csv')
 
 cont = 0
-for col in dataset["N_Muertos"]:
+for col in X["N_Muertos"]:
     if col > 0:
         cont += 1
         

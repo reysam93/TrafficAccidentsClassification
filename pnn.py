@@ -14,7 +14,6 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from sklearn import datasets, metrics
-from sklearn.model_selection import train_test_split
 from neupy import algorithms, environment
 
 # Read and shuffle data
@@ -51,3 +50,10 @@ scalar = StandardScaler()
 scalar.fit(X_train)
 X_train_n = scalar.transform(X_train)
 X_val_n = scalar.transform(X_val)
+
+#PNN simple of neupy
+pnn = algorithms.PNN(std=10, verbose=False)
+pnn.train(X_train_n, Y_train)
+
+y_predicted = pnn.predict(X_test)
+metrics.accuracy_score(Y_test, y_predicted)
