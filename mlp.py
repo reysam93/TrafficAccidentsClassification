@@ -149,18 +149,18 @@ def mlpSimpleDiv(X, Y):
 """
 def mlpCrossVal(X, Y):
     
-    #kbest = SelectKBest(f_classif, k=10)
-    #X_kbest = kbest.fit_transform(X, Y)
-    #vt = VarianceThreshold(0)
+    #kbest = SelectKBest(f_classif, k=30)
+    #X_red = kbest.fit_transform(X, Y)
+    #vt = VarianceThreshold(0.9)
     #X_red = vt.fit_transform(X, Y)
     #print(X_red.shape)
     
     scalar = StandardScaler()
-    mlp = MLPClassifier(activation="logistic", learning_rate="adaptive", verbose=False,
-                        max_iter=150, hidden_layer_sizes=20, early_stopping=True, 
-                        tol=1e-8, validation_fraction=0.2, alpha=1e-5)    
+    mlp = MLPClassifier(activation="logistic", learning_rate="adaptive", verbose=True,
+                        max_iter=200, hidden_layer_sizes=20, early_stopping=True, 
+                        tol=1e-8, validation_fraction=0.3, alpha=1e-5)    
     pipeline = make_pipeline(scalar, mlp)
-    scores = cross_val_score(pipeline, X, Y, cv=10)
+    scores = cross_val_score(pipeline, X, Y, cv=3)
 
     print(scores)
     print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
@@ -191,6 +191,7 @@ def kNeighborsCrossVal(X, Y):
     print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
     return scores, kn
     
+
 def pnnTrainTestNoNorm(X, Y):
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=0.7)
     pnn = algorithms.PNN(std=10, verbose=False)
@@ -200,6 +201,7 @@ def pnnTrainTestNoNorm(X, Y):
     score = metrics.accuracy_score(Y_test, y_predicted)
     print("PNN score: ", score)
     return score, y_predicted
+    
     
 def pnnTrainTestNorm(X, Y):
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=0.7)
