@@ -21,6 +21,10 @@ from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
 
+# Needed to install neupy (sudo pip install neupy)
+from sklearn import datasets, metrics
+from neupy import algorithms, environment
+
 
 # Not working!
 from sklearn.feature_selection import SelectKBest
@@ -186,6 +190,32 @@ def kNeighborsCrossVal(X, Y):
     print(scores)
     print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
     return scores, kn
+    
+def pnnTrainTestNoNorm(X, Y):
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=0.7)
+    pnn = algorithms.PNN(std=10, verbose=False)
+    pnn.train(X_train, Y_train)
+    
+    y_predicted = pnn.predict(X_test)
+    score = metrics.accuracy_score(Y_test, y_predicted)
+    print("PNN score: ", score)
+    return score, y_predicted
+    
+def pnnTrainTestNorm(X, Y):
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=0.7)
+    
+    scalar = StandardScaler()
+    scalar.fit(X_train)
+    X_train_n = scalar.transform(X_train)
+    X_test_n = scalar.transform(X_test)
+    
+    pnn = algorithms.PNN(std=10, verbose=False)
+    pnn.train(X_train_n, Y_train)
+    
+    y_predicted = pnn.predict(X_test_n)
+    score = metrics.accuracy_score(Y_test, y_predicted)
+    print("PNN score: ", score)
+    return score, y_predicted
 
 
 """
@@ -205,3 +235,5 @@ if __name__ == "__main__":
     #mlpCrossVal(X, Y)
     #svmCrossVal(X,Y)
     #kNeighborsCrossVal(X,Y)
+    #pnnTrainTestNoNorm(X, Y)
+    #pnnTrainTestNorm(X, Y)

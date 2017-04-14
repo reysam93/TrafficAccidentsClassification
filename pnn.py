@@ -43,17 +43,22 @@ X.fillna(value=0, inplace=True)
 
 # Split in train and validation
 # Maybe shuffle is not neccesary if using random_state here
-X_train, X_val, Y_train, Y_val = train_test_split(X, Y, train_size=0.8)
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size=0.7)
 
 # Normalization
+
 scalar = StandardScaler()
 scalar.fit(X_train)
 X_train_n = scalar.transform(X_train)
-X_val_n = scalar.transform(X_val)
+X_test_n = scalar.transform(X_test)
+#scalar.fit(Y_train)
+#Y_train_n = scalar.transform(Y_train)
+#Y_test_n = scalar.transform(Y_test)
+
 
 #PNN simple of neupy
 pnn = algorithms.PNN(std=10, verbose=False)
 pnn.train(X_train_n, Y_train)
 
-y_predicted = pnn.predict(X_test)
-metrics.accuracy_score(Y_test, y_predicted)
+y_predicted = pnn.predict(X_test_n)
+print("PNN score: ", metrics.accuracy_score(Y_test, y_predicted))
