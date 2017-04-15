@@ -230,7 +230,16 @@ if __name__ == "__main__":
     train_data = shuffle(pd.read_csv('traindata.csv'), random_state=0)
     print("Data:", train_data.shape)
     
+    
     X, Y = analyze_select_data(train_data)
+    
+    #Transform outliers into mean
+    for column in X:
+        X[column] =  X[column][abs(X[column] - np.mean(X[column])) < 9 * np.std( X[column])]
+        where_are_NaNs = np.isnan(X[column])
+        X[column][where_are_NaNs] = np.mean(X[column])
+
+    
     print("Shape of X:", X.shape)
     
     #mlpSimpleDiv(X, Y)
