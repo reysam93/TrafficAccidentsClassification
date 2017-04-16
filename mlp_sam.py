@@ -213,7 +213,7 @@ def mlpCrossVal(X, Y):
     
 
 # Mejor precison media:     0.80      0.62      0.66
-# Con pesos balanceados:    0.76      0.62      0.66
+# Con pesos balanceados:    0.77      0.63      0.67
 def svmSimpleVal(X,Y):
     X_train, X_val, Y_train, Y_val = train_test_split(X, Y, train_size=0.8)
    # X_red_train = FastICA(n_components=K, whiten=True).fit_transform(X_train, Y)
@@ -225,8 +225,9 @@ def svmSimpleVal(X,Y):
     X_val_n = scalar.fit_transform(X_val)
     
     undersample = SMOTE()
-    svm = SVC(verbose=True, kernel="rbf", decision_function_shape="ovr",
-              random_state=RANDOM_STATE, C=0.008, degree=2)
+    svm = SVC(verbose=True, kernel="poly", decision_function_shape="ovr",
+              random_state=RANDOM_STATE, C=0.03, degree=3,
+              )
               
     classifier = make_pipeline(undersample, svm)
     
@@ -234,6 +235,7 @@ def svmSimpleVal(X,Y):
     classifier.fit(X_train_n, Y_train)
     prediction = classifier.predict(X_val_n)
     print ("\n", classification_report(prediction, Y_val))
+    print("N ones:", len(np.where(prediction == 1)[0])/len(prediction))    
     return classifier, scalar
 
 
@@ -242,9 +244,9 @@ def svmCrossVal(X, Y):
     
     scalar = StandardScaler()
     undersample = SMOTE()
-    svm = SVC(verbose=True, kernel="rbf", decision_function_shape="ovr",
-              random_state=RANDOM_STATE, C=0.008, degree=2,
-              class_weight="balanced")
+    svm = SVC(verbose=True, kernel="poly", decision_function_shape="ovr",
+              random_state=RANDOM_STATE, C=0.03, degree=3,
+              )#class_weight="balanced"
     classifier = make_pipeline(undersample, svm)
     pipeline = make_pipeline(scalar, classifier)
     scores = cross_val_score(pipeline, X, Y, cv=5)
