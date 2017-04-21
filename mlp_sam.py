@@ -45,7 +45,7 @@ from sklearn.feature_selection import RFE
 
 RANDOM_STATE = 42
 # Number of components after dimennsional reduction
-K =60
+K =50
 
 def print_all_data(X, Y):  
     np_y = np.array(Y)
@@ -140,6 +140,8 @@ def analyze_select_data(data, train=True):
     rm_cols += more_rm_cols
     X.drop(rm_cols, axis=1, inplace=True)
     X.fillna(value=0, inplace=True)
+    
+    # Uncomment 
     # print_all_data(X,Y) 
     # print_column("Arboles_Metros_Calzada", X, Y)
 
@@ -151,8 +153,8 @@ def analyze_select_data(data, train=True):
 """
 def mlpSimpleDiv(X, Y):
     X_train, X_val, Y_train, Y_val = train_test_split(X, Y, train_size=0.8)
-    X_red_train = FastICA(n_components=K, whiten=True).fit_transform(X_train, Y)
-    X_red_val = FastICA(n_components=K, whiten=True).fit_transform(X_val, Y)
+    #X_red_train = FastICA(n_components=K, whiten=True).fit_transform(X_train, Y)
+   # X_red_val = FastICA(n_components=K, whiten=True).fit_transform(X_val, Y)
     
     # Normalization
     scalar = StandardScaler()
@@ -161,10 +163,10 @@ def mlpSimpleDiv(X, Y):
     
     # MLP creation + trainning
     scalar = StandardScaler()
-    mlp = MLPClassifier(activation="identity", verbose=False, solver="adam",
-                        max_iter=150, hidden_layer_sizes=(100,3), early_stopping=True, 
-                        tol=1e-12, validation_fraction=0.3, alpha=1e-8,
-                        learning_rate_init=0.1, beta_1=0.5, warm_start=True,
+    mlp = MLPClassifier(activation="relu", verbose=False, solver="adam",
+                        max_iter=150, hidden_layer_sizes=(3,200), early_stopping=True, 
+                        tol=1e-12, validation_fraction=0.2, alpha=1e-4,
+                        learning_rate_init=0.1, beta_1=0.3, warm_start=True,
                         random_state=RANDOM_STATE)
                         
     undersample = SMOTE()
@@ -173,6 +175,7 @@ def mlpSimpleDiv(X, Y):
     classifier.fit(X_train_n, Y_train)
     prediction = classifier.predict(X_val_n)
     print ("\n", classification_report(prediction, Y_val))
+    print("N ones:", len(np.where(prediction == 1)[0])/len(prediction))
     return classifier, scalar
 
 
@@ -212,12 +215,18 @@ def mlpCrossVal(X, Y):
     return classifier, scalar
     
 
-# Mejor precison media:     0.80      0.62      0.66
-# Con pesos balanceados:    0.77      0.63      0.67
+"""
+    BEst config:
+     svm = SVC(verbose=True, kernel="poly", decision_function_shape="ovr",
+              random_state=RANDOM_STATE, C=0.035, degree=3,
+              )
+    
+"""
 def svmSimpleVal(X,Y):
     X_train, X_val, Y_train, Y_val = train_test_split(X, Y, train_size=0.8)
-   # X_red_train = FastICA(n_components=K, whiten=True).fit_transform(X_train, Y)
-    #X_red_val = FastICA(n_components=K, whiten=True).fit_transform(X_val)
+    #ica = FastICA(n_components=K, whiten=True).fit(X_train, Y)
+    #X_red_train = ica.transform(X_train)
+    #X_red_val = ica.transform(X_val)
     
     # Normalization
     scalar = StandardScaler()
@@ -227,7 +236,7 @@ def svmSimpleVal(X,Y):
     undersample = SMOTE()
     svm = SVC(verbose=True, kernel="poly", decision_function_shape="ovr",
               random_state=RANDOM_STATE, C=0.03, degree=3,
-              )
+              )#class_weight="balanced"
               
     classifier = make_pipeline(undersample, svm)
     
@@ -245,11 +254,11 @@ def svmCrossVal(X, Y):
     scalar = StandardScaler()
     undersample = SMOTE()
     svm = SVC(verbose=True, kernel="poly", decision_function_shape="ovr",
-              random_state=RANDOM_STATE, C=0.03, degree=3,
-              )#class_weight="balanced"
+              random_state=RANDOM_STATE, C=0.055, degree=3,
+              class_weight="balanced")
     classifier = make_pipeline(undersample, svm)
     pipeline = make_pipeline(scalar, classifier)
-    scores = cross_val_score(pipeline, X, Y, cv=5)
+    scores = cross_val_score(pipeline, X, Y, cv=20)
 
     print(scores)
     print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
@@ -338,12 +347,13 @@ def logisticRegr(X,Y):
     and predict the results.
 """
 def predictTestData(X_train, Y_train, classifier, scalar):
-    #X_red_train = FastICA(n_components=K, whiten=True).fit_transform(X_train)
+    #ica = FastICA(n_components=K, whiten=True).fit(X_train, Y_train)
+    #X_red_train = ica.transform(X_train)
     Xn = scalar.fit_transform(X_train)
     classifier.fit(Xn, Y_train)
     test_data = pd.read_csv('testdata.csv')
-    X_test, Y_test = analyze_select_data(test_data, False)
-    #X_red_test = FastICA(n_components=K, whiten=True).fit_transform(X_test)
+    (X_test, Y_test) = analyze_select_data(test_data, False)
+    #X_red_test = ica.transform(X_test)
     Xn_test = scalar.fit_transform(X_test)
     pred = pd.DataFrame(classifier.predict(Xn_test),index=np.arange(1,201))#index=np.arange(1,201)
     pred.to_csv("predicted.csv", header=["Prediction"], index_label="Id")
