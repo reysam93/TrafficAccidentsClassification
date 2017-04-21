@@ -1,0 +1,111 @@
+@article{peredadocencia,
+  title={Docencia de rob{\'o}tica con jderobot 5},
+  author={Pereda, Javier V{\'a}zquez}
+}
+
+@inproceedings{canas2013recent,
+  title={Recent advances in the JdeRobot framework for robot programming},
+  author={Cañas, JM and Gonz{\'a}lez, M and Hern{\'a}ndez, A and Rivas, F},
+  booktitle={Proceedings of RoboCity2030 12th Workshop, Rob{\'o}tica Cognitiva},
+  pages={1--21},
+  year={2013}
+}
+
+@inproceedings{foukarakis2014combining,
+  title={Combining Finite State Machine and Decision-Making Tools for Adaptable Robot Behavior.},
+  author={Foukarakis, Michalis and Leonidis, Asterios and Antona, Margherita and Stephanidis, Constantine},
+  booktitle={HCI (6)},
+  pages={625--635},
+  year={2014}
+}
+
+@inproceedings{bohren2011towards,
+  title={Towards autonomous robotic butlers: Lessons learned with the PR2},
+  author={Bohren, Jonathan and Rusu, Radu Bogdan and Jones, E Gil and Marder-Eppstein, Eitan and Pantofaru, Caroline and Wise, Melonee and M{\"o}senlechner, Lorenz and Meeussen, Wim and Holzer, Stefan},
+  booktitle={Robotics and Automation (ICRA), 2011 IEEE International Conference on},
+  pages={5568--5575},
+  year={2011},
+  organization={IEEE}
+}
+
+@article{smach2013,
+  title={The smach high-level executive},
+  author={Jonathan, B and Steve, C},
+  journal={IEEE Robotics \& Automation magazine},
+  year={2013}
+}
+
+@article{scratchEducativo,
+  title={Programar con Scratch en contextos educativos:?` Asimilar directrices o co-construir Tecnolog{\'\i}as para la Inclusi{\'o}n Social?},
+  author={Monjelat, Natalia and San Mart{\'\i}n, Patricia Silvana},
+  journal={Praxis Educativa},
+  volume={20},
+  number={1},
+  pages={61--71},
+  year={2016}
+}
+
+@article{learningWithBlockly,
+  title={Introducci{\'o}n a la programaci{\'o}n inform{\'a}tica mediante videojuegos para estudiantes de secundaria},
+  author={Echaguibel Mart{\'\i}nez, Enaitz},
+  year={2015},
+  publisher={Universitat Polit{\`e}cnica de Catalunya}
+}
+
+@article{martin2010herramienta,
+  title={Herramienta de programaci{\'o}n visual de aut{\'o}matas en Jderobot},
+  author={Mart{\'\i}n Amor, Carlos Iv{\'a}n},
+  year={2010},
+  publisher={Universidad Rey Juan Carlos}
+}
+
+@article{paperDavidYunta,
+  title={Visual automata programming for robot behaviors},
+  author={David Yunta, Jose María Cañas},
+  year={2012},
+  journal={M{\'a}laga, Spain-June 2016}
+}
+
+@article{yunta2012herramienta,
+  title={Herramienta de programación visual de autómatas de estado finito para aplicaciones robóticas.},
+  author={David Yunta Garro},
+  year={2012},
+  publisher={Universidad Rey Juan Carlos}
+}
+
+@article{salamanques2012,
+  title={Herramienta de programaci{\'o}n visual de aut{\'o}matas de estado finito jer{\'a}rquicos para aplicaciones rob{\'o}ticas},
+  author={Salamanques Ballesteros, Rub{\'e}n},
+  year={2012},
+  publisher={Universidad Rey Juan Carlos}
+}
+
+@article{menendezprogramming,
+  title={Programming of a Nao humanoid in Gazebo using Hierarchical FSM},
+  author={Men{\'e}ndez, Borja and Salamanqu{\'e}s, Rub{\'e}n and Canas, Jos{\'e} Mar{\i}a}
+}
+
+@article{borja2014,
+  title={VisualHFSM 4: Programación de humanoides con autómatas de estado finito usando JdeRobot},
+  author={Borja Menéndez Moreno},
+  year={2014},
+  publisher={Universidad Rey Juan Carlos}
+
+@article{rey2016visualhfsm,
+  title={VisualHFSM 5: recent improvements in programming robots with automata in JdeRobot},
+  author={Rey, Samuel and Canas, Jos{\'e} M},
+  journal={M{\'a}laga, Spain-June 2016},
+  year={2016},
+  pages={155}
+}
+
+@inproceedings{koenig2004design,
+  title={Design and use paradigms for gazebo, an open-source multi-robot simulator},
+  author={Koenig, Nathan and Howard, Andrew},
+  booktitle={Intelligent Robots and Systems, 2004.(IROS 2004). Proceedings. 2004 IEEE/RSJ International Conference on},
+  volume={3},
+  pages={2149--2154},
+  year={2004},
+  organization={IEEE}
+}
+

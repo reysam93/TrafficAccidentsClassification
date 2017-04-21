@@ -1,0 +1,76 @@
+@Article{fuchang,
+  Author         = {{Fu Chang} and {Chun-Jen Chen} and {Chi-Jen Lu}},
+  Title          = {A linear-time component-labeling algorithm using
+                   contour tracing technique},
+  Journal        = {Computer Vision and Image Understanding},
+  month          = {8 } # sep,
+  year           = 2003
+}
+
+@Article{jnavarro,
+	author = 	 {Navarro, Juan},
+	title = 	 {Construcción de mapa 3D desde sensores RGB D},
+	journal = 	 {Proyecto Fin de Carrera, URJC},
+	year = 	 {2015},
+	OPTkey = 	 	{},
+	OPTvolume = 	{},
+	OPTnumber = 	{},
+	OPTpages = 	 	{},
+	OPTmonth = 	 	{},
+	OPTnote = 	 	{},
+	OPTannote = 	{}
+}
+
+@mastersthesis{saraPFC,
+    author    = {Marugán Alonso, Sara},
+    title     = {Seguimiento 3D visual de múltiples personas utilizando un algoritmo evolutivo multimodal},
+    school    = {Universidad Rey Juan Carlos},
+    type     = {Proyecto Fin de Carrera},
+    year      = {2007},
+}
+
+@mastersthesis{saraPFG,
+    author    = {Marugán Alonso, Sara},
+    title     = {Seguimiento visual de personas mediante evolución de primitivas volumétricas},
+    school    = {Universidad Rey Juan Carlos},
+    type     = {Trabajo Fin de Carrera},
+    year      = {2010},
+}
+
+@mastersthesis{saraTFM,
+    author    = {Marugán Alonso, Sara},
+    title     = {Sistema autónomo de detección de caídas con recepción de alarmas en un teléfono móvil},
+    school    = {Universidad Rey Juan Carlos},
+    type     = {Trabajo Fin de Máster},
+    year      = {2010},
+}
+
+@mastersthesis{frivasTFG,
+    author    = {Rivas Montero, Francisco Miguel},
+    title     = {Seguimiento de personas en 3D basado en sensores RGB-D},
+    school    = {Universidad Rey Juan Carlos},
+    type     = {Trabajo Fin de Grado},
+    year      = {2014},
+}
+
+@mastersthesis{frivasTFM,
+    author    = {Rivas Montero, Francisco Miguel},
+    title     = {Algoritmo evolutivo para detección y seguimiento de personas en 3D con sensores RGBD},
+    school    = {Universidad Rey Juan Carlos},
+    type     = {Trabajo Fin de Grado},
+    year      = {2014},
+}
+
+@Article{zoran1,
+  Author         = {Zoran Zivkovic},
+  Title          = {Improved adaptive Gaussian mixture model for background subtraction},
+  Journal        = {International Conference Pattern Recognition},
+  year           = 2004
+}
+
+@Article{zoran2,
+  Author         = {Zoran Zivkovic},
+  Title          = {Pattern Recognition Letters},
+  Journal        = {Eficient Adaptative Density Estimation per Image Pixel for the Task of Background Subtraction},
+  year           = 2006
+}

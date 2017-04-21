@@ -1,0 +1,95 @@
+\documentclass[a4paper,twoside,openright,12pt]{report}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{layout}
+\usepackage{emptypage}
+\usepackage{fancyhdr}
+\usepackage[activeacute,spanish]{babel}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{mathtools}
+\usepackage[Lenny]{fncychap}
+\usepackage{hyperref}
+\usepackage[a4paper,top=3.5cm, bottom=3cm, inner=3cm, outer=2.5cm]{geometry}
+\usepackage{listings}
+\usepackage{enumerate}
+\usepackage{cite}
+
+
+\headheight=16pt
+\pretolerance=10000
+\renewcommand{\lstlistingname}{Código}
+
+\pagestyle{fancy}
+\renewcommand{\chaptermark}[1]{\markboth{\chaptername	\ \thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}
+
+\fancyhf{}
+%\fancyhead[LO,RE]{\leftmark} % Nombre de capítulo
+\fancyhead[LE,RO]{\rightmark} % Nombre de sección
+\fancyfoot[C]{\thepage}
+
+\pagestyle{empty}
+
+\title{VisualHFSM 5.0}
+\author{Samuel Rey Escudero}
+
+\lstset{
+	float=hbp,
+	basicstyle=\ttfamily\small,
+	columns=flexible,
+	tabsize=4,
+	frame=single,
+	extendedchars=true,
+	showspaces=false,
+	showstringspaces=false,
+	numbers=none,
+	numberstyle=\tiny,
+	breaklines=false,
+	breakautoindent=true,
+	captionpos=b
+}
+
+\begin{document}
+
+%%%%%%%%%%%%%%% Portada %%%%%%%%%%%%%%%%%%%%
+\hypersetup{pageanchor=false}
+\include{portada}
+
+%\layout % Imprime un esquema con el layout.
+
+\pagenumbering{Roman} % para comenzar la numeración de paginas en números romanos
+\hypersetup{pageanchor=true}
+
+%%%%%%%%%%%%%%% Agradecimientos %%%%%%%%%%%%
+%%\include{agradecimientos}
+
+%%%%%%%%%%%%%%% Resumen %%%%%%%%%%%%%%%%%%%%
+%%\include{resumen}
+
+%%%%%%%%%%%%%%% Índices %%%%%%%%%%%%%%%%%%%%
+\tableofcontents
+\cleardoublepage
+\listoffigures % índice de figuras
+\cleardoublepage
+
+%%%%%%%%%%%%%%% Capítulos %%%%%%%%%%%%%%%%%%
+\pagenumbering{arabic}
+\pagestyle{fancy}
+\setlength{\parskip}{10pt}
+\include{1_introduccion}
+\include{2_objetivos}
+\include{3_infraestructura}
+\include{4_visualHFSM5}
+\include{5_experimentos}
+\include{6_conclusiones}
+
+%%%%%%%%%%%%%%% Bibliografía %%%%%%%%%%%%%%%
+\nocite{*}
+\bibliographystyle{acm}
+\bibliography{biblio}
+
+\end{document}

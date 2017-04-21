@@ -1,0 +1,19 @@
+\chapter{Infraestructura}\label{chap:Infraestructura}
+En este capítulo se presenta la plataforma en la que se engloba este proyecto y las herramientas que se han utilizado para llevarlo a cabo, centrándonos pincipalmente el simulador utilizado para la mayoría de los experimentos, las bibliotecas gráficas empleadas y Ice.
+
+%%%%%%%%%%%%%%% JdeRobot %%%%%%%%%%%%%%%
+\section{JdeRobot}
+Este TFG se ha desarrollado utilizando la plataforma JdeRobot, resultado de la Tesis Doctoral de José María Cañas Plaza y mantenida y mejorada a lo largo de losaños por el grupo de robótica de la Universidad Rey Juan Carlos.
+
+
+
+%%%%%%%%%%%%%%% Gazebo %%%%%%%%%%%%%%%
+\section{Gazebo}
+
+
+%%%%%%%%%%%%%%% Ice %%%%%%%%%%%%%%%
+\section{Ice}
+
+%%%%%%%%%%%%%%% GTK+, Glade y PyQt4 %%%%%%%%%%%%%%%
+\section{GTK+, Glade y PyQt4}
+

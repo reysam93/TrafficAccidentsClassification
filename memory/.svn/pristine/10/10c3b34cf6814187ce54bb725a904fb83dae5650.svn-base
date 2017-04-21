@@ -1,0 +1,30 @@
+\begin{titlepage}
+	\centering
+	\includegraphics[width=0.6\linewidth]{imgs/logoURJC}\par
+	\vspace{2.5cm}
+	{\scshape\LARGE Ingeniería en Tecnologías de la Telecomunicación\par}
+	\vspace{2cm}
+	{\scshape\Large Trabajo fin de grado\par}
+	\vspace{1.5cm}
+	{\huge\bfseries VisualHFSM 5.0\par}
+	\vspace{2.5cm}
+	\vfill
+	\textbf{Autor:} Samuel Rey Escudero\par
+	\textbf{Tutor:} Prof. José María Cañas\par
+	\vspace{2.5cm}
+	{\large Curso académico 2015/2016}
+\end{titlepage}
+
+\pagebreak
+\thispagestyle{empty}
+\vspace*{14cm}
+
+\begin{flushright}
+	\includegraphics[height=1.0cm]{imgs/by-sa}\par
+\vspace*{0.5cm}
+\copyright 2016 Samuel Rey Escudero\par
+\vspace*{0.3cm}
+Esta obra está distribuida bajo la licencia de ``Reconocimiento-CompartirIgual 4.0 Internacional (CC BY-SA 4.0)'' de Creative Commons.\par
+\vspace{0.2cm}
+Para ver una copia de esta licencia, visite http://creativecommons.org/licenses/by-sa/4.0/ o envíe una carta a Creative Commons, 171 Second Street, Suite 300, San Francisco, California 94105, USA.
+\end{flushright}

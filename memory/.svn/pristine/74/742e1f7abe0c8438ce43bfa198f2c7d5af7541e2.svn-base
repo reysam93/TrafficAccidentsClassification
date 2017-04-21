@@ -1,0 +1,145 @@
+\chapter{Resultados Experimentales}\label{chap:Experimentos}
+En este capítulo presentaremos los experimentos más relevantes que hemos realizado utilizando VisualHFSM 5.0. Aunque esta herramienta ya ha sido validada en versiones anteriores, con estos ejemplos buscamos validar el correcto funcionamiento de todas las mejoras introducidas, centrándonos especialmente en la nueva posibilidad de generar componentes en Python y en la GUI en ejecución. Además, con estos experimentos, buscamos también demostrar que VisualHFSM es una herramienta útil y cómoda para programar el comportamiento de autómatas de una manera más rápida y sencilla.
+
+
+%%%%%%%%%%%%%%% Bump & Go %%%%%%%%%%%%%%%
+\section{Bump \& Go}
+%%% Descripción
+El primer experimento que explicaremos se llama \textit{Bump \& Go}\footnote{\url{http://jderobot.org/Teaching_robotics_with_JdeRobot\#Bump_and_go}}. Este sencillo ejemplo es la solución a la práctica con el mismo nombre de Teaching Robotics que ya mencionamos en el capítulo anterior.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[height=7cm]{imgs/5_experiments/bumpAndGoDiagram.png}
+	\caption{Diagrama de estado Bump \& Go.}
+	\label{fig:bumpAndGoDiagram}
+\end{figure}
+
+El escenario inicial consta de un robot Kobuki situado en el centro de un laberinto y el comportamiento de dicho robot es sencillo. El robot debe avanzar recto hasta que detecte que se ha acercado demasiado a un obstáculo. Entonces, deberá retroceder un poco, girar un ángulo aleatorio, y volver a avanzar recto, repitiendo este proceso una y otra vez. El diagrama de estados que representa este comportamiento puede verse en la figura \ref{fig:bumpAndGoDiagram}, donde se observa que cuenta con 3 estados: el estado inicial \textit{Go} (figura \ref{fig:BampAndGo-Go}), en el que uínicamente va recto, pasándo al estado \textit{GoBack} cuando se acerca demasiado a un obstáculo, y una vez que ha retrocedido lo suficiente pasa al estado \textit{Rotate} (figura \ref{fig:BampAndGo-Rotate}), dónde girará un ángulo aleatorio desde su posición. Una vez que ha alcanzado dicho ángulo, volverá al estado inicial. Una muestra de la ejecución de este experimento puede verse en la figura \ref{bumpAndGo}.
+
+\begin{figure}[htbp]
+	\begin{subfigure}{1\textwidth}
+	\centering
+	\includegraphics[height=6cm]{imgs/5_experiments/BAGFront.png}
+	\caption{Estado Go.}
+	\label{fig:BampAndGo-Go}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{1\textwidth}
+	\centering
+	\includegraphics[height=6cm]{imgs/5_experiments/BAGRotate.png}
+	\caption{Estado Rotate.}
+	\label{fig:BampAndGo-Rotate}
+	\end{subfigure}
+\caption{Aplicación Bump \& Go en distintos estados.}
+\label{bumpAndGo}
+\end{figure}
+
+%%% Motivación
+El objetivo de este experimento era demostrar que con VisualHFSM es posible desarrollar comportamientos autónomos de robots introduciendo muy poco código. Además, hemos conseguido un ejemplo que puede servir de referencia a los alumnos que vayan a resolver este ejercicio en cursos futuros.
+
+
+%%%%%%%%%%%%%%% Monitor An Area %%%%%%%%%%%%%%%
+\section{Monitor an Area}
+El experimento \textit{Monitor an Area}\footnote{\url{http://jderobot.org/S.rey-tfg\#Monitor_Area_example}} simula un escenario más complejo que el del caso anterior, representando una posible situación de uso real en la que los Drones podrían ser de utilidad. El mundo de este ejemplo simula un accidente de coche, con unas víctimas en el suelo, y para evaluarlas rápidamente se ha decidido enviar un drone autónomo para revisar con su cámara en que estado se encuentran y poder acudir en su ayuda lo mejor preparados posibles. Para esto, el drone debe seguir la carretera hasta el punto en el que ha tenido lugar el accidente, encontrar a las víctimas, coger imágenes para que se evalúe su estado, y regresar.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[height=7cm]{imgs/5_experiments/monitorArea.png}
+	\caption{Diagrama de estado Monitor an Area.}
+	\label{fig:monitorDiagram}
+\end{figure}
+
+Estas distintas acciones que debe realizar el robot de forma autónoma pueden representarse perfectamente mediante un esquema de diagramas y transiones, obteniendo el resultado que muestra la figura \ref{fig:monitorDiagram}. Este esquema representa el comportamiento de un autómata jerárquico, en el que el comportamiento del robot debe ser el siguiente:
+
+\begin{enumerate}
+\item Empezar despegando en el estado \textit{TakeOff}.
+\item A continuación, pasa al estado \textit{HeightControl}, donde se alcanzará la altura deseada para poder seguir bien la carretera. A este estado se podrá transitar desde los demás estados otra vez en caso de que la altura se desvíe demasiado de la deseada, con la idea de corregir posibles derivas de alturas provocadas, por ejemplo, por corrientes de aire.
+\item Tras alcanzar esta altura se transita al estado \textit{FollowRoad}, encargado de seguir la carretera. Este estado tiene un subautómata hijo con otros dos estados: \textit{FindRoad}, que será el estado encargado de encontrar la carretera otra vez si se perdiese de vista, y el estado \textit{FollowingRoad}, encargado de seguir la carretera una vez ha sido localizada. El hecho de dividir la tarea de seguir la carretera en estos dos estados facilita que el algoritmo empleado para encontrar otra vez la carretera pueda complicarse cuánto se desee sin necesidad de que esto afecte al seguimiento de la carretera.
+\item Cuando el drone ha llegado al punto en el que el accidente tuvo lugar (en este caso por simplicidad hemos supuesto que se sabía las coordenadas), se pasa al estado \textit{MonitorArea}. Este estado es el encargado de buscar a las víctimas. En esta ocasión, nuevamente por simplificar el código del ejemplo, hemos supuesto que se sabía el número de víctimas y su ubicación gps exacta, por lo que el estado cuenta con un subautómata con un estado distinto para acudir a la posición de cada víctima mediante un sistema de control PID, y un último estado para regresar a la posición en la que abandonó la carretera.
+\item Cuando regreda a la carretera transita al estado \textit{TurnAround}, que hará que el drone rote 180 grados para poder seguir la carretera ensentido contrario.
+\item Cuando ha terminado de dar la vuelta, regresa al estado \textit{FollowRoad}, siguiendo nuevamente la carretera hasta llegar al punto donde despegó.
+\item Una vez que el drone está sobre la posición de la que salió en un primer momento, se activará el estado \textit{Landing}. Nuevamente, este estado tiene un subautómata hijo para conseguir que el aterrizaje sea suave. Primero se activará el estado \textit{Descending}, que se encargará de que el drone pierda altura antes de que se de la orden de aterrizar, de forma que cuando la altura es la deseada, el estado activo pasará a ser \textit{Land}, donde el drone terminará el aterrizaje.
+\item Por último, el estado \textit{END} simplemente llamará a la función \emph{shutDown()} para que se termine la ejecución de la aplicación.
+\end{enumerate}
+
+Si observamos la figura \ref{monitorArea} podemos ver imágenes de la aplicación en ejecución en distintos estados. En la figura \ref{fig:followingRoad} se puede observar al ArDrone siguiendo la carretera, y la figura \ref{fig:watchPerson.png} muestra cómo el ArDrone ha llegado hasta una se sus víctimas.
+
+\begin{figure}[htbp]
+	\begin{subfigure}{1\textwidth}
+	\centering
+	\includegraphics[height=6cm]{imgs/5_experiments/followingRoad.png}
+	\caption{Siguiendo la carretera.}
+	\label{fig:followingRoad}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{1\textwidth}
+	\centering
+	\includegraphics[height=6cm]{imgs/5_experiments/watchPerson.png}
+	\caption{Monitorizando a una de las víctimas.}
+	\label{fig:watchPerson.png}
+	\end{subfigure}
+\caption{Aplicación Monitor an Area.}
+\label{monitorArea}
+\end{figure}
+
+Con este ejemplo, conseguimos además probar la robustez de los componentes generados por nuestra herramienta utilizando un diagrama de estados de mayor complejidad y con distintos niveles de jerarquía, y, por tanto varios subautómatas con sus respectivos hilos corriendo simultáneamente. Sirve también para probar la robustez de la GUI en ejecución, su navegación, y especialmente el correcto funcionamiento de la funcionalidad \textit{autofocus} que ofrece, que sólo tiene sentido en autómatas multinivel.
+
+
+%%%%%%%%%%%%%%% Sigue Colores %%%%%%%%%%%%%%%
+\section{Sigue Colores}
+Esta práctica también utiliza un drone, y aunque el comportamiento es más artificial que la anterior (no se acerca a ningún caso de uso posible), está pensada para ser ejecutada en robots reales. El ejercicio consiste en un drone, que tendrá que ser capaz de buscar y seguir distintos colores que detecte mediante filtros de color por su cámara ventral en un orden determinado. La secuencia deberá ser: seguir al verde hasta encontrar un color azul, entonces seguir al azul hasta encontrar otro verde. En este caso se volverá a seguir al verde hasta que detecte un color rojo, pasando entonces a seguir a este color hasta que el usuario decida terminar la ejecución. Es importante que el drone sea capaz de ignorar todos los colores que no estén relacionados con la secuencia que se espera que siga. Esto es, si estando en el estado \textit{FollowGreenLookBlue} pasasebajo su cámara algo de color rojo, el drone debería ignorarlo.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[height=7cm]{imgs/5_experiments/colorsDiagram.png}
+	\caption{Diagrama de estado Sigue Colores.}
+	\label{fig:colorsDiagram}
+\end{figure}
+
+En la figura \ref{fig:colorsDiagram} puede observarse el diagrama de estados que se encargará de resolver esta situación. Se parte de un estado \textit{TakeOff}, en el que el drone se elevará hasta alcanzar una altura determinada. Cuando esta altura ha sido alcanzada, transitará al estado \textit{FollowGreenLookBlue}. Este estado se encargará de coger las imágenes de la camára ventral y filtrarlas buscando color verde para seguirlo, y color azul, para pasar al siguiente estado en caso de encontrarlo. Cuenta además con un subautómata hijo que se encarga de seguir el color verde que su padre ha localizado. Para esto, el subautómata empieza en el estado \textit{WaitGreen}, en el cual esperará sin hacer nada hasta que su padre detecte el color verde, en cuyo caso se activará el estado \textit{FollowGreen}, que se encargará de seguirlo utilizando un con PID. En este caso hemos optado por quedarnos parados hasta encontrar un color verde porque buscábamos un algoritmo que no fuese demasiado complejo para probarlo con robots reales, y además el experimento estaba pensado para realizarse en el laboratorio de robótica, un espacio cerrado y por lo tanto limitado. Esta forma de seguir al color se ha implementado igual en todos los estados, por lo que todoscuentan con un subautómata hijo.
+
+Una vez que se detectase un color azul, el subautómata raíz transitará al estado \textit{FollowBlueLookGreen}, donde seguirá al nuevo color azul hasta que encuentre un color verde.En este caso, para evitar que detecte automáticamente el color verde del estado anterior, se ha dejado un periodo refractario en el que el estado sólo buscará el color azul, y pasado este periodo empezará a buscar también el color verde, de forma que cuando lo encuentre, pasará al estado \textit{FollowGreenLookRed}. Este estado funciona igual que el primer estado que seguía el color verde, pero en lugar de buscar el color azul para transitar, ahora buscará el color rojo. Por último, cuando se detecte el color rojo, se pasará al estado \textit{FollowRed}, dónde unicamente buscará y seguirá el color rojo como ya hemos explicado hasta que el usuario decida interrumpir la ejecución.
+
+Aunque el experimento está pensado para ejecutarse en robots reales, para depurar y validar el código hemos utilizado antes un simulador. Para esto, hemos utilizado el ArDrone, y 3 robots pioneer de color verde, azul y rojo, que pueden ser teleoperados utilizando la herramienta \textit{kobukiViewer} que ofrece JdeRobot para comprobar que efectivamente el drone les está siguiendo. Esto puede verse en la figura \ref{fig:colorsSim}, donde se observa el drone simulado siguiendo al pineer verde (figura \ref{fig:followingGreenSim}) y al rojo (\ref{fig:followingRoad}).
+
+\begin{figure}[htbp]
+	\begin{subfigure}{1\textwidth}
+	\centering
+	\includegraphics[height=6cm]{imgs/5_experiments/followingGreenSim.png}
+	\caption{Siguiendo el Pioneer verde simulado.}
+	\label{fig:followingGreenSim}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{1\textwidth}
+	\centering
+	\includegraphics[height=6cm]{imgs/5_experiments/followingRedSim.png}
+	\caption{Siguiendo el Pioneer rojo simulado.}
+	\label{fig:followingRedSim}
+	\end{subfigure}
+\caption{Aplicación Sigue Colores en Gazebo.}
+\label{fig:colorsSim}
+\end{figure}
+
+Una vez que hemos validado el correcto funcionamiento del componente generado en el simulador, nos hemos preparado para probarlo en el mundo real. Para esto, hemos sustituido los pioneers por cartulinas de colores que nosotros íbamos moviendo para que el drone las siguiese, pero nos hemos encontrado con algunas dificultades. En primer lugar, el robot real no ofrece información real sobre su altura, por lo que hemos medido la altura deseada por el número de iteraciones que pasaban hasta que la alcanzase. Esto ya lo sabíamos en la versión simulada pero era necesario comprobar que la altura era la correcta fuera de Gazebo. Así mismo, la velocidad enviada al robot tuvo que reducirse, dado que es más rápido que el real es más sensible que el simulado. Sin embargo, los dos grandes retos a los que nos hemos enfrentado en el mundo real han sido: los filtros de color y la poca estabilidad del robot real. 
+
+La principal diferencia entre el mundo real y el simulado es la luz, que en las simulaciones es mucho más uniforme. Sin embargo, en la realidad hay muchos brillos y puede varir mucho de un momento a otro, o de una zona a otra, incluso dentro de la misma clase. Esto hace que realizar un buen filtro de color robusto sea muy complicado. Luego, en el simulador el robot real es completamente estable, pero no en la realidad. De hecho, tiene una pequeña deriva hacia un lado, lo que provocaba que cuando se quedaba \"quieto\" esperando encontrar un color, en verdad se movía constantemente a un lado ocasionando que se chocase.
+
+Por todas estas razones, no hemos conseguido ejecutar el comportamiento deseado de arriba a bajo, aunque si hemos validado los estados de manera independiente, como puede observarse en la figuras \ref{fig:colorsReal}, donde se observa al ArDrone siguiendo la cartulina verde (figura \ref{fig:followingGreen}) y la cartulina roja (figura \ref{fig:followingRed}).
+
+\begin{figure}[htbp]
+	\begin{subfigure}{1\textwidth}
+	\centering
+	\includegraphics[height=6cm]{imgs/5_experiments/followingGreen.jpg}
+	\caption{Siguiendo la cartulina verde.}
+	\label{fig:followingGreen}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{1\textwidth}
+	\centering
+	\includegraphics[height=6cm]{imgs/5_experiments/followingRed.jpg}
+	\caption{Siguiendo la cartulina roja.}
+	\label{fig:followingRed}
+	\end{subfigure}
+\caption{Aplicación Sigue Colores.}
+\label{fig:colorsReal}
+\end{figure}

@@ -1,0 +1,59 @@
+\chapter{Objetivos}\label{chap:Objetivos}
+Tras haber presentado en el capítulo anterior el contexto general del proyecto, con sus motivaciones, y los dos pilares principales sobre los que se apoya, nos disponemos a fijar sus objetivos, sus requisitos mínimos, y el plan de trabajo para llevarlo a cabo.
+
+%%%%%%%%%%%%%%% Descripción del problema %%%%%%%%%%%%%%%
+\section{Descripción del problema}
+El objetivo de este proyecto es conseguir una versión mejorada de la herramienta VisualHFSM, que sea lo suficientemente madura como para ser utilizada cómodamente por terceros. Queremos que la herramienta se de a conocer para:
+
+\begin{enumerate}
+\item Los desarrolladores de aplicaciones robóticas descubran una potente herramienta que puede ahorrarles tiempo al permitirles programar el comportamiento de robots de forma más rápida y sencilla utilizando una representación de estados y transiciones.
+\item Saber cómo es percibida la herramienta por los usuarios para recibir realimentación y descubrir nuevas formas de mejorar aún más su usabilidad, para conseguir una aplicación lo más cómoda y amigable posible.
+\end{enumerate}
+
+VisualHFSM seguirá siendo una herramienta que se aproxima a los LPV, con una interfaz gráfica que permitirá programar el comportamiento del autómata mediante un diagrama de estados, reduciendo al mínimo el código que el usuario necesita introducir. \\
+
+Para conseguir esto, hemos separado el problema en varios subobjetivos:
+
+\begin{itemize}
+\item \textbf{Mejorar la usabilidad del editor gráfico}: Aunque el editor gráfico ya está bastante maduro, aún tiene aspectos que conviene mejorar, como la navegación entre niveles o la flexibilidad al crear archivos de configuración. Además, nos hemos encontrado con algunos errores que perjudican la usabilidad de la herramienta.
+\item \textbf{Recuperar la GUI en ejecución para autómatas multinivel}: Esta característica permite visualizar en tiempo de ejecución qué estados están activos, actualizándose éstos dinámicamente. Aunque esta funcionalidad resulta muy útil para la depuración de los componentes, se perdió cuando se añadió soporte para autómatas \textit{jerárquicos} en anteriores versiones de VisualHFSM, y con esta versión nos hemos propuesto como objetivo recuperar dicha funcionalidad.
+\item \textbf{Generar componentes en Python}: Con el fin de incrementar la flexibilidad que VisualHFSM ofrece, otro de los objetivos es añadir la posibilidad de generar componentes en Python, además del generador de código C++ ya existente. Es importante que también pueda utilizarse la GUI en ejecución para estos componentes.
+\item \textbf{Difusión}: Además de centrarnos en mejorar la herramienta, también consideramos necesario realizar un esfuerzo en cuanto a su difusión, dándola a conocer a la comunidad robótica y facilitando su uso.
+\end{itemize}
+
+
+%%%%%%%%%%%%%%% Requisitos %%%%%%%%%%%%%%%
+\section{Requisitos}
+Tras haber explicado los objetivos propuestos, los requisitos de partida a los que deberá ajustarse el proyecto son:
+
+\begin{itemize}
+\item La herramienta no puede perder funcionalidad ya existente.
+\item Tiene que ser capaz de representar gráficamente el autómata en tiempo de ejecución de forma que sea fácilmente comprensible.
+\item La GUI en tiempo de ejecución debe soportar una gran número de estados, transiciones y subautómatas, permitiendo una navegación cómoda entre ellos.
+\item Cuando el autómata se genere con código Python, VisualHFSM debe mantener todas las funcionalidades que tenía para autómatas de C++. Estas funcionalidades incluyen el GUI en tiempo de ejecución.
+\item El código generado debe ser compatible con la plataforma robótica \emph{JdeRobot 5.3.2.}
+\end{itemize}
+
+%%%%%%%%%%%%%%% Plan de trabajo %%%%%%%%%%%%%%%
+\section{Metodología y plan de trabajo}
+El desarrollo de este proyecto seguirá el modelo en espiral, basado en la necesidad de separar el comportamiento final en varias subtareas más sencillas que luego se juntarán. Cada tarea finalizada aporta los requisitos y la información necesaria para abordar la siguiente iteración del modelo de desarrollo, creándose además puntos de control cada vez que se finaliza una de estas tareas. \\
+
+Además, durante toda la realización del proyecto se mantendrán reuniones con el tutor cada semana o cada dos semanas, con el fin de monitorizar los avances obtenidos, el estado global del proyecto, y plantear nuevos objetivos. Así mismo, todos los logros y avances se registrarán y comentarán en la MediaWiki\footnote{\url{http://jderobot.org/S.rey-tfg}}, pudiendo encontrarse el código en mi repositorio de GitHub\footnote{\url{https://github.com/reysam93/TFG}}, el cuál se irá actualizando. \\
+
+El desarrollo de este TFG seguirá los siguientes pasos:
+\begin{enumerate}
+\item \textbf{Familiarización con la plataforma JdeRobot y el simulador Gazebo:} Empezaremos el proyecto con la instalación de la plataforma JdeRobot y sus dependencias, probando distintos componentes simples y haciéndoles pequeñas modificaciones para jugar un poco con el entorno y acostumbrarnos a él.
+
+\item \textbf{Familiarización con VisualHFSM:} VisualHFSM es una herramienta compleja que cuenta con una gran cantidad de código. Crearemos comportamientos sencillos para robots utilizando la versión existente para ver cómo se comporta, detectar posibles flecos a mejorar, y comprender su código fuente.
+
+\item \textbf{Realización del GUI en en tiempo de ejecución para C++:} Tras tener claro como funciona la herramienta, nos encargaremos de utilizar GTK+ y Glade para diseñar la GUI en tiempo de ejecución, que debe ser lo más similar posible al editor gráfico. Para esto, primero se elaborará la GUI en tiempo de ejecución para autómatas mononivel, y después para autómatas jerárquicos, siendo necesario modificar el generador de código para que cree un hilo adicional que relacionado con el GUI en tiempo de ejecución, que añadirá a la plantilla el código necesario para actualizar el estado en el que se encuentra el autómata.
+
+\item \textbf{Generador de código en Python:} Crearemos un nuevo generador automático de código en Python que utilizará una nueva plantilla y creará el autómata siguiendo un modelo de programación orientado a objetos.
+
+\item \textbf{GUI en tiempo de ejecución para Python:} Esta vez, se creará con PyQt4 y contará con alguna funcionalidad adicional que no está disponible en la GUI de C++. Su realización seguirá el mismo planteamiento que en C++: primero se realizará para autómatas mononivel y después para autómatas jerárquicos.
+
+\item \textbf{Realización de experimentos:} Para comprobar el correcto funcionamiento de las mejoras introducidas, todo el proceso irá acompañado de la realización de experimentos simples, creando algún escenario más complejo para la validación final.
+
+\item \textbf{Crear una documentación detallada:} Una vez que la herramienta esté lista, será necesario crear una documentación fácil y clara para que los usuarios interesados en utilizar la herramienta tengan un primer contacto lo más sencillo posible.
+\end{enumerate}
+

@@ -1,0 +1,28 @@
+@article{peredadocencia,
+  title={Docencia de rob{\'o}tica con jderobot 5},
+  author={Pereda, Javier V{\'a}zquez}
+}
+
+@article{scratchEducativo,
+  title={Programar con Scratch en contextos educativos:?` Asimilar directrices o co-construir Tecnolog{\'\i}as para la Inclusi{\'o}n Social?},
+  author={Monjelat, Natalia and San Mart{\'\i}n, Patricia Silvana},
+  journal={Praxis Educativa},
+  volume={20},
+  number={1},
+  pages={61--71},
+  year={2016}
+}
+
+@article{learningWithBlockly,
+  title={Introducci{\'o}n a la programaci{\'o}n inform{\'a}tica mediante videojuegos para estudiantes de secundaria},
+  author={Echaguibel Mart{\'\i}nez, Enaitz},
+  year={2015},
+  publisher={Universitat Polit{\`e}cnica de Catalunya}
+}
+
+@article{smach2013,
+  title={The smach high-level executive},
+  author={Jonathan, B and Steve, C},
+  journal={IEEE Robotics \& Automation magazine},
+  year={2013}
+}

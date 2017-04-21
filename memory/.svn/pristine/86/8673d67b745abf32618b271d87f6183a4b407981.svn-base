@@ -1,0 +1,130 @@
+\chapter{Infraestructura}\label{chap:Infraestructura}
+En este capítulo vamos a hablar de la infraestructura que da soporte a este proyecto, y las diversas herramientas que se han utilizado para realizarlo. Para esto, empezaremos explicando que es JdeRobot, la plataforma en la que se enmarca VisualHFSM. A continuación, hablaremos de Gazebo y comentaremos la importancia de los simuladores en robótica. Después detallaremos que es Ice, y finalizaremos comentando las distintas librerias gráficas utilizadas para elaborar la GUI, principalmente GTK+ y PyQt4, y la herramienta Glade.
+
+%%%%%%%%%%%%%%% JdeRobot %%%%%%%%%%%%%%%
+\section{JdeRobot}
+La plataforma JdeRobot fue creada por José María Cañas Plaza como resultado de su tesis doctoral, y ha sido mantenida y mejorada a largo de los años por el grupo de Robótica de la Universidad Rey Juan Carlos. Esta plataforma está relacionada con este TFG, dado que VisualHFSM se sitúa dentro de ella.
+
+JdeRobot es una plataforma código libre pensada para facilitar la programación de aplicaciones de robótica, domótica y visión artificial. Es una plataforma orientada a componentes, con distintos elementos independientes. Estos componentes se ejecutan siguiedo un modelo cliente-servidor, en el que cada aplicación es ejecutada como un proceso, ofreciendo una interfaz para programar sistemas de tiempo real y resolver problemas que estén relacionados con la sincronización de procesos y la adquisición de datos. Tradicionalmente, los componentes estaban principalmente programados en C/C++, aunque en la actualidad la tendencia es utilizar el lenguaje Python. Sin embargo, hay programas en otros lenguajes, como por ejemplo, JavaScript.
+
+JdeRobot simplifica el acceso a los sensores y actuadores (a los dispositivos hardware), permitiendo obtener valores y enviar datos de forma sencilla. Para esta interactuación, utiliza como puente los interfaces de comunicación Ice.
+
+Por último, comentar que todo el código y los componentes que se encuadran en esta plataforma puede encontrarse en github\footnote{\url{https://github.com/RoboticsURJC/JdeRobot}}. La arquitectura se encuentra dividida en componentes, drivers, interfaces, librerías y herramientas, siendo en este último grupo donde se sitúa VisualHFSM.
+
+%%%%%%%%%%%%%%% Gazebo %%%%%%%%%%%%%%%
+\section{Gazebo}
+A pesar de que la robótica es un campo que genera un gran interés, en ocasiones, la gran inversión necesaria para accederal hardware puede resultar prohibitiva. Es por esto que la simulación por ordenador se plantea como una alternativa válida y de bajo coste, pero la simulación ofrece otras ventajas adicionales que justifican su uso:
+
+\begin{itemize}
+\item \textsl{Gestión de recursos:} Utilizar un simulador combinado con una capa de abstracción al hardware (HAL, \textit{Hardware Abstraction Layer}), permite desarrollar código para robots existentes pero a los que no se tiene acceso en un determinado momento. Esto resulta especialmente útil cuando hay varios desarrolladores trabajando con un único robot.
+\item \textsl{Control del tiempo:} Algunos simuladores (entre ellos, Gazebo), permiten modificar el tiempo, parándolo o acelerándolo, tanto negativa como positivamente. Esto resulta especialmente útil, por ejemplo, a la hora de hacer pruebas de durabilidad o para inspeccionar el estado de los robots en cierto momento.
+\item \textsl{Prototipado:} Gracias a la simulación existe la posibilidad de crear software para robots que aún no han sido contruidos.
+\item \textsl{Reusabilidad:} Como el uso de simuladores suele combinarse con algún tipo de capa de abstracción, el código generado puede ser compartido con otras personas.
+\end{itemize}
+
+Gazebo\footnote{\url{www.gazebosim.org}} es un simulador 3D que ofreceun entorno para desarrollar y probar sistemas multirrobot de manera sencilla. Permite la simulación de manera realista de gran variedad de sensores y actuadores como cámaras, lásers, GPS, etc., gracias, en parte, al motor de física que utiliza, ODE (\textit{Open Dynamics Engine}), y a la librería gráfica OpenGL (\textit{Open Graphics Library}). Además, Gazebo da soporte a una gran variedad de robots comerciales como Turtlebot, el Pioneer 2-DX o el Ar Drone, y es también una herramienta de software libre.
+
+Es simulador nació dentro del proyecto Player/Stage, pero se acabó seprando y está siendo mantenido por Willow Garage, un laboratorio de investigación robótica dedicado al desarrollo de open source. Además, ha recibido financiación de DARPA (\textit{Defense Advanced Research Projects Agency}), convirtiéndose así en el simulador estándar \textit{de facto} dentro de la comunidad robótica, siendo empleado también para el \textit{DARPA Robotics Challenge}.
+
+Otra de las principales características de Gazebo es que permite crear nuevos modelos y mundos robóticos. Un mundo simulado en Gazebo es un conjunto de todos los modelos y factores ambientales, como al luz o la gravedad, donde los modelos se componen de al menos un cuerpo, con las articulaciones que este pueda necesitar. Cuando el modelo está listo, las aplicaciones robóticas se conectan al simulador mediante los \textit{plugins} o bibliotecas dinámicas. Es necesario implementar estas bibliotecas utilizando la API de Gazebo. En la figura \ref{fig:gazeboWorld} podemos observar uno de los mundos de gazebo creados para uno de los experimentos.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[height=7cm]{imgs/3_infrastructure/gazeboWorld.png}
+	\caption{Mundo de Gazebo creado para realizar pruebas.}
+	\label{fig:gazeboWorld}
+\end{figure}
+
+%%%%%%%%%%%%%%% Ice %%%%%%%%%%%%%%%
+\section{Ice}
+Ice\footnote{\url{https://zeroc.com/}} es un \textit{middleware} desarrollado por ZeroC empleado por JdeRobot para la intercomunicación de componentes, especialmente importante para comunicarse con los drivers que permiten la relación con los sensores y actuadores del robot. Es un \textit{framework} RPC (\textit{Remote Procedure Call}) orientado a objetos que provee de una capa de abstración sobre la red y sus conexiones, con una doble licencia GNU GPL y una licencia propietaria.
+
+Ice permite utilizar aplicaciones de Internet sin la necesidad de usar los protocolos HTTP, y además, es capaz de atravesar cortafuegos, una característica que lo diferencia de la mayoría de los middleware similares. Soporta  distintos sistemas operativos como Windows, MAC OS X, Linux y Solaris, y provee un IDE (\textit{Interface Definition Language}): SLICE (\textit{Specification Language for ICE}), que ayuda a definir la manera decomunicación y los parámetros utilizados entre los componentes. Una vez que dicho interfaz decomunicación está definido, se puede compilar en distintos lenguajes, dando así soporte a Python, C++, C\#, Java o JavaScript, entre otros. Además, esto hace que el cliente y el servidor puedan estar programados en distintos lenguajes.
+
+Existe también una variante, Ice-E, que permite utilizar Ice dentro de teléfonos móviles.
+
+
+%%%%%%%%%%%%%%% GTK+, Glade, PyQt4 y PyQt 4 Designer%%%%%%%%%%%%%%%
+\section{GTK+ y PyQt4}
+Para la realización de este proyecto hemos utilizado diferentes librerías gráficas para la realización de la GUI en tiempo de ejecución.
+
+Para la GUI en tiempo de ejecución del comoponente generado en C/C++ hemos empleado la tercera versión de GTK+. El principal motivo por el que hemos empleado esta librería, ha sido porque queríamos que el aspecto de la GUI en tiempo de ejecución fuese lo más parecido posible a la GUI del editor gráfico, y con la idea también de reestructurar y reorganizar todo el código posible del editor.
+
+%GTK+
+GTK+\footnote{\url{http://www.gtk.org}} o \textit{TheGIMP Toolkit} es un conjunto de bibliotecas multiplataforma que permiten desarrollar interfaces gráficas de usuario (GUI, \textit{Graphic User Interface}). GTK es una interfaz orientada a objetos para programadores de aplicaciones (API, \textit{Application Programming Interface}), ecrita principalmente en C, aunque cuenta con enlaces a otros lenguajes de programación como C++, Python y C\#. 
+
+GTK+ se basa en las bibliotecas desarrolladas por el equipo de GTK+ y por el equipo de GNOME\footnote{\url{http://www.gnome.org}}:
+
+\begin{itemize}
+\item \textbf{GLib:} Se trata de una biblioteca de bajo nivel que envuelve la mayor parte de las funciones de la biblioteca estándar de C para manejar estructuras de datos, portabilidad, interfaces para funcionalidades de tiempo de ejecución como ciclos, hilos carga dinámica o un sistema de objetos.
+\item \textbf{GDK:} Es una biblioteca que actúa como intermediaria entre gráficos de bajo nivel y gráficos de alto nivel.
+\item \textbf{ATK:} una biblioteca que permite la creaciín de interfaces accesibles para gente discapacitada.
+\item \textbf{Pango:} Permite el diseño y renderizado de texto, siendp esta biblioteca el núcleo para mejorar las fuentes y el texto en GTK+2.
+\item \textbf{Cairo:} Biblioteca de renderizado avanzado de controles de aplicación.
+\item \textbf{GTK:} La biblioteca principal que contiene los objetos y funciones necesarios para crear e interaccionar con la interfaz de usuario.
+\end{itemize}
+
+Con GTK+ cada elemento de la interfaz gráfica recibe el nombre de \textit{Widget}. Los widgtets pueden representar botones, cuadros de diálogos, barras de deslizamiento, etc. Existe una gran multitud de \textit{widgets} distintos, pero todos ellos heredan de una misma clase, tal como se observa en la figura \ref{fig:treeViewHeritage}, en la cual podemos observar el esquema de herencia de la clase Gtk::TreeView.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[height=5cm]{imgs/3_infrastructure/herenciaTreeView.png}
+	\caption{Esquema de la herencia de la clase Gtk::TreeView.}
+	\label{fig:treeViewHeritage}
+\end{figure}
+
+La forma de  interactuar con los \textit{widgets} es utilizando eventos. Cuando tiene lugar un evento, como hacer click en un \textit{widget} o cerrar una ventana, se emitirá una señal concreta. Esta señal puede ser conectada a una función (\textit{manejador} o \textit{callback}), de forma que cuando se emita dicha señal, se activará su manejador y se ejecutará el código que se haya programado dentro de él. De esta forma, para realizar una acción concreta cuando se pulse un botón, sólo es necesario programar dicha acción dentro de una función, y conectar la señal con ella.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[height=5cm]{imgs/3_infrastructure/bucleGTK.png}
+	\caption{Diagrama de flujo de GTK+.}
+	\label{fig:gtkMain}
+\end{figure}
+
+Al trabajar con eventos, el diagrama de flujo de una aplicación GTK+ es como el que se observa en la figura \ref{fig:gtkMain}. Una vez arrancada, la interfaz gráfica se queda en un bucle a la espera de que se produzca un evento. Cuando esto sucede, el control lo recibe el callback apropiado, y una vez que ha este ha terminado, el control vuelve al bucle principal, que vuelve a quedar a la espera de que se produzca un evento nuevo.
+
+%PyQt4
+Para el componente en Python, hemos optado por utilizar la versión 4 de PyQt, un \textit{binding} de la biblioteca gráfica Qt, desarrollada por Riverbank Computing\footnote{\url{https://riverbankcomputing.com/}} y disponible para Windows, GNU/Linux y Mac OS X bajo diferentes licencias. Este cambio de librería gráfica se debe principalmente a al trabajar ahora con aplicaciones en Python, la reutilización del código del editor original, escrito en C++, ya no resulta importante. 
+
+Qt\footnote{\url{http://www.qt.io/}} es una biblioteca multiplataforma ampliamente utilizada para desarrollar aplicaciones con GUI, desarrollada como un software libre y de código abierto a través de Qt Project, donde participa tanto la comunidad, como desarrolladores de Nokia y Digia, enre otras empresas. Está hecho en C++, pero adicionalmente puede ser utilizado en otros lenguajes de programación mediante \textit{bindings}, estando disponible para Python, C\#, Ruby y Java, entre otros.
+
+PyQt4 se encuentra dividido en una serie de componentes que pueden ser importados individualmente como módulos de Python, de los cuales hemos utilizado:
+
+\begin{itemize}
+\item \textbf{QtCore:} Contiene las clases que no están directamente relacionadas con la GUI, incluyendo el bucle principal de la interfaz y funciones para trabajar con señales y slots.
+\item \textbf{QtGui:} Módulo que contiene la mayoría de las clases relacionadas con la GUI.
+\end{itemize}
+
+En cuanto al flujo de ejecución, PyQt4 funciona igual que GTK+, quedándose a la espera de que se produzca un evento, y pasándole el control a su manejador cuando este tiene lugar, cómo ya hemos explicado. 
+
+Además, nos hemos aprovechado de una de las herramientas que ofrece: \textit{pyuic4}. Este programa convierte la GUI que se ha diseñado en código python, de forma que puede incluirse como un \textit{import} más, evitando que esta traducción tenga lugar en tiempo de ejecución.
+
+
+%Glade y Qt 4 Designer
+Por otra parte, el desarrollo de las interfaces gráficas de usuario se han utilizado dos herramientas de desarrollo visual distintas, en función de la biblioteca gráfica empleada:
+
+\begin{itemize}
+\item \textit{Glade Interface Designer:}\footnote{\url{https://glade.gnome.org/}} Utilizado para el desarrollo de la interfaz gráfica con la librería GTK+. Guarda la interfaz diseñada en un fichero XML que puede cargarse dinámicamente en tiempo de ejecución gracias a los objetos \textit{GtkBuilder}. 
+\item \textit{Qt 4 Designer:}\footnote{\url{http://doc.qt.io/qt-4.8/designer-manual.html}} Utilizado para el diseño de la interfaz gráfica utilizando la librería Qt. Al igual que \textit{Glade}, guarda el diseño en un archivo XML y permite su carga de manera dinámica en tiempo de ejecución. Sin embargo, como ya hemos comentado, en este TFG hemos optado por crear un módulo python a partir del XML mediante el programa \textit{pyuic4}, e importarlo en el código.
+\end{itemize}
+
+En la figura \ref{fig:bothDesigners} podemos observar una imagen de las dos herramientas que acabamos de describir, cada una de ellas con la GUI que hemos diseñado abierta.
+
+\begin{figure}[htbp]
+	\centering
+	\begin{subfigure}{0.45\textwidth}
+	\includegraphics[height=4cm]{imgs/3_infrastructure/qtDesigner.png}
+	\caption{Qt 4 Designer.}
+	\label{fig:qtDesigner}
+	\end{subfigure}
+	\hfill
+	\centering
+	\begin{subfigure}{0.45\textwidth}
+	\includegraphics[height=4cm]{imgs/3_infrastructure/gladeEditor.png}
+	\caption{Glade Interface Designer.}
+	\label{fig:gladeDesigner}
+	\end{subfigure}
+\caption{Herramientasde desarrollo visual empleadas para diseñar la GUI para Python y para C++.}
+\label{fig:bothDesigners}
+\end{figure}

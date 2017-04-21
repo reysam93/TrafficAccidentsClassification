@@ -1,0 +1,9 @@
+\chapter* {Resumen}
+
+La robótica es un campo que está experimentando una expansión y desarrollo nunca antes visto, utilizándose cada vez en más aplicaciones y más variadas. Uno de los factores determinantes para esto radica en la inteligencia de los robots, su programación, por lo que muchos lenguajes han ido adaptándose a esta rama facilitando cada vez más su uso en la programación de robots. Además, han aparecido alternativas distintas a la programación tradicional, como los lenguajes de programación visual o el uso de máquinas de estados para representar fácilmente el comportamiento de los robots. \\
+
+En estos dos pilares se apoya nuestra herramienta, VisualHFSM. esta herramienta se sitúa dentro de la plataforma JdeRobot y facilita la programación de comportamientos de robots generando gran parte del código. Para esto, el flujo de control se representa visualmente mediante un diagrama de estados, de forma que el desarrollador únicamente tiene que introducir el código que realmente necesita. Se trata de un generador automático de código basado en un lenguaje semi-visual y en las máquinas de estados. \\
+
+Este trabajo tiene como objetivo alcanzar una nueva versión de esta herramienta, más robusta, flexible y potente, facilitando que pueda ser utilizada por terceros. Para esto, nos hemos centrado en dos mejoras principales: crear una interfaz de usuario que muestre dinámicamente los estados activos en tiempo de ejecución facilitando la depuración de los componentes, y añadir la posibilidad de crear componentes en Python, incrementando enormemente la potencia y flexibilidad de la herramienta. \\
+
+Además, hemos hecho un esfuerzo de difusión para dar a conocer la herramienta y hemos mejorado la usabilidad y robustez del editor gráfico.
