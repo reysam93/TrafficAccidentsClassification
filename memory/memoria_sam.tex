@@ -9,7 +9,7 @@
 \title{Predicción de mortalidad en accidentes de tráfico}
  
 \author{Samuel Rey y David Moreno
-\IEEEcompsocitemizethanks{\IEEEcompsocthanksitem Samuel Rey and Jos\'e M. Ca\~nas are with Universidad Rey Juan Carlos\protect\\
+\IEEEcompsocitemizethanks{\IEEEcompsocthanksitem Samuel Rey y David Moreno - Universidad Rey Juan Carlos\protect\\
 
 E-mail: samuel.rey.escudero@gmail.com, dmorenolumb@gmail.com.es
 %\IEEEcompsocthanksitem Vicente Matell\'an is with University of Rey Juan Carlos.
@@ -24,7 +24,7 @@ E-mail: samuel.rey.escudero@gmail.com, dmorenolumb@gmail.com.es
 % Yo
 	
 Resumen
-\end{IEEEkeywords}
+\end{abstract}
 
 
 \section{Introduction}
@@ -35,11 +35,44 @@ Resumen
 % TODO: Hablar del conjunto de datos
 
 
-\IEEEPARstart{I}ntroducción
+\IEEEPARstart{I}ntroducción 
 
 \section{Metodología}
-% Yo
-\IEEEPARstart{I}ntroducción
+\subsection{Análisis de datos}
+\IEEEPARstart{A}l tratarse de datos con una dimensionalidad tan alta y tanto ruido, es imprescindible realizar un buen análisis de los datos y una fase de extracción de características. Para esto, lo primero que hemos hecho ha sido revisar los datos con los que hemos trabajado. De esta forma hemos detectado los atributos que no aportaban información, como el \textit{Número de accidente} o el \textit{id}, y los hemos eliminado. Así mismo, hemos detectado atributos en los que más del 90\% de las observaciones tenían un valor de \textit{NaN}. Este análisis también nos ha permitido detectar información recibida. Por ejemplo, los campos \textit{Carretera}, \textit{Km} y \textit{Pk} están ya recogidos en las coordenadas GPS. \\
+
+A continuación, hemos representado cada atributo restante mediante gráficos de barras, para visualizar el número de accidentes de cada clase para los distintos valores de los atributos. Con esto, buscábamos encontrar las características que no aparentemente no aportasen ningún tipo de información para eleminarlas del conjunto de datos, reduciendo así la dimensionalidad. Además del análisis visual, antes de decidir si borrar o no una característica, hemos comparado los resultados obtenidos entrenando la máquina con y sin ella, eliminándola unicamente si no mejoraba el resultado. \\
+
+% TODO: alguna imagen de las gráficas y referenciarla
+
+Tras este prceso de análisis y extracción de características, hemos conseguido reducir el número de atributos de [INDICA CUANTO!!] a [INDICA CUANTO!!]. \\
+
+Cómo la dimensionnalidad de los datos seguía siendo muy elevada, hemos utilizado los siguientes métodos de extracción de características para seleccionar las K mejores: \\
+
+\begin{itemize}
+	\item Principal Component Analysis
+	\item Truncated Singular Value Decomposition
+	\item Información mutua
+	\item Mayor varianza
+\end{itemize}
+
+Para cada método hemos probado diferentes valores de K, pero en todos los casos el resultado empeoraba al aplicar la extracción de caraterísticas. \\
+
+\subsection{Selección del modelo}
+Después de la extración de características, el principal problema al que nos hemos enfrentado ha sido elegir el modelo más adecuado para este problema de clasificación. Los modelos considerados han sido los sigientes: \\
+
+\begin{itemize}
+	\item MLP
+	\item SVM
+	\item K-vecinos
+	\item PNN
+	\item Regresor logístico
+\end{itemize} 
+
+Tras ajustar estos modelos, los que han ofrecido un mejor resutado han sido el SVM y el MLP, por lo que nos hemos centrado especialmente en ajustar lo mejor posible los parámetros de estos dos modelos. \\
+
+La figura de mérito que empleamos inicialmente para valorar los modelos fue la \textit{accuracy}. Los evaluamos utilizando valiadción cruzada, dividiendo los datos e grupos de 10. Sin embargo, al darnos cuenta que el conjunto de test estaba desbalanceado cambiamos la forma de evaluar los modelos. Utilizando los datos de la matriz de confusión, utilizamos cómo métrica la \textit{precision} y el \textit{recall}, de cada clase por separado y de media. Al haber más elementos de la clase 1 que de la case 0, nos centramos especialmente en conseguir un modelo con buenos resultados para dicha clase. De esta forma, al seleccionar el modelo, considerábamos un coste muy elevado a clasificar un elemento de la clase 1 como un elemento de la clase 0, mientras el caso contrario tenía un coste mucho más reducido.
+
 
 
 \section{Resultados}
