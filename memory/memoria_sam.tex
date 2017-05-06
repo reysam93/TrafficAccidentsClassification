@@ -28,14 +28,31 @@ Resumen
 
 
 \section{Introduction}
+\IEEEPARstart{L}a predicción de los accidentes de tráfico es uno de los mayores retos de la actual sociedad debido al alto coste económico y, sobre todo, humano que conllevan. Las técnicas de análisis de datos y aprendizaje máquina (\textit{Machine Learning}) ofrecen una oportunidad única para analizar y comprender las razones subyacentes que provocan estos accidentes, otorgando la oportunidad de, en última instancia, predecirlos. En este contexto, los datos recopilados de accidentes anteriores permiten analizar en detalle los factores involucrados para buscar tendencias o patrones. Sin embargo, existen diversos factores que hacen que el análisis de los datos y su utilización para futuras predicciones sea un verdadero reto: \\
 
-% David
+\begin{itemize}
+	\item Las bases de datos son muy grandes y heterogéneas, por lo que habitualmente no se puede trabajar con datos de distintas procedencias. \\
+	
+	\item Los datos son introducidos manualmente por personas, por lo que son propensos a errores o valores inádecuado y a presentar ruido. Sobre este tema se profundiza algo más en el artículo \cite{analisis_datos}. \\
 
-% TODO: Comentar referencia
-% TODO: Hablar del conjunto de datos
+	\item Las situaciones reales son complejas y sus datos cuentan con un gran número de atributos, por lo que los modelos utilizados para predecir los resultados tienen una gran dimensionalidad y requieren un gran número de ejemplos. \\
+\end{itemize}
 
+% Quitar??
+%La utilidad y a la vez, dificultad que esta situación presenta, así como la actual relevancia que está adquiriendo el campo de análisis de datos y aprendizaje máquina, ha motivado la realización de un datatón y concurso en la universidad Rey Juan Carlos. En este datatón se proporcionarán conocimientos básicos en estas materias así como distintos consejos para abordar el problema, haciendo un ranking de las distintas soluciones obtenidas y premiando las dos primeras. \\
 
-\IEEEPARstart{I}ntroducción 
+En este artículo, para abordar este problema nos centraremos en predecir la gravedad del accidente, abordándolo como un problema de clasificación binaria. Basándonos en los atributos número de heridos leves, número de heridos graves y número de muertos, las clases que hemos definido son: \\
+
+\begin{itemize}
+	\item \textit{Clase 0 - Accidente leve}: consideraremos accidetentes leves todos aquellos en los que no haya ni muertos ni heridos.
+	\item \textit{Clase 1 - Accidente grave}: clasificaremos como accidentes graves aquellos en los que haya habido muertos o heridos, ya sean leves o graves.
+\end{itemize}
+
+Esta definición de clases ha sido establecida por el concurso organizado en el datatón de la universidad Rey Juan Carlos, y la máquina explicada en este artículo ha sido ha sido propuesta como solución. Esto supone una dificultad añadida, dado que el conjunto de test utilizado para evaluar las diferentes máquinas presentadas al concurso tenía las clases desbalanceadas. Aproximadamente el 75\% de elementos del conjunto de tests pertenecían a la clase 1, mientras que sólo el 25\% representaban a la clase 0. Sin embargo, el conjunto de datos de entrenamiento no estaba desbalanceado. En él, el 54\% de las observaciones pertenecían a la clase 1 y el 46\% restante a la clase 0. \\
+
+La base de datos utilizada consta de más de 9000 observaciones, con 83 atributos cada una. Se trata de datos muy ruidosos y de una gran dimensionalidad, algo que resulta especialmente problemático, como se explica en \cite{alta_dimensionalidad}. Además, la mayoría de los atributos son paramétricos, por lo que presenta pocos outliers. Sin embargo, algunos atributos tenían un gran númro de elementos incorrectos. Todo esto hace que sea necesario una primera fase de procesamiento de datos y selección de características antes de elegir y entrenar el modelo, para utilizar tener en cuenta sólo las características que realmente aportan información y ayudan a mejorar el rendimiento de la máquina. Esta fase de análisis de datos es especialmente importante, dado que evita ayuda a evitar sobreaujustes y que el modelo aprenda errores existentes en los datos o incluso el ruido. Cómo se comenta en \cite{extraccion_datos}, un buen análisis previo puede conseguir que un modelo sencillo supere el rendimiento de modelos mucho más complejos. \\
+
+A continuación, se explicara detalladamente la metodología empleada para resolver el problema. Se explicará en que ha consistido el análisis de datos realizado, los distintos modelos que se han considerado para resolver el problema y las figuras de mérito que hemos considerado. Después, detallaremos los dos modelos que han dado un mejor resultado comentando los parámetros de cada uno, y para finalizar, expondremos las conclusiones a las que hemos llegado después de enfrentarnos a este problema. \\
 
 \section{Metodología}
 \subsection{Análisis de datos}
@@ -71,16 +88,18 @@ Después de la extración de características, el principal problema al que nos 
 
 Tras ajustar estos modelos, los que han ofrecido un mejor resutado han sido el SVM y el MLP, por lo que nos hemos centrado especialmente en ajustar lo mejor posible los parámetros de estos dos modelos. \\
 
-La figura de mérito que empleamos inicialmente para valorar los modelos fue la \textit{accuracy}. Los evaluamos utilizando valiadción cruzada, dividiendo los datos e grupos de 10. Sin embargo, al darnos cuenta que el conjunto de test estaba desbalanceado cambiamos la forma de evaluar los modelos. Utilizando los datos de la matriz de confusión, utilizamos cómo métrica la \textit{precision} y el \textit{recall}, de cada clase por separado y de media. Al haber más elementos de la clase 1 que de la case 0, nos centramos especialmente en conseguir un modelo con buenos resultados para dicha clase. De esta forma, al seleccionar el modelo, considerábamos un coste muy elevado a clasificar un elemento de la clase 1 como un elemento de la clase 0, mientras el caso contrario tenía un coste mucho más reducido.
+El 80\% de los datos disponibles se han utilizado para el conjunto de entrenamiento y el 20\% restante para el conjunto de validación, utilizado para medir las prestaciones del modelo. La separación de estos grupos se ha realizado de forma aleatoria. \\
+
+La figura de mérito que empleamos inicialmente para valorar los modelos fue la \textit{accuracy}. Los evaluamos utilizando valiadción cruzada, dividiendo los datos e grupos de 10. Sin embargo, al darnos cuenta que el conjunto de test estaba desbalanceado cambiamos la forma de evaluar los modelos. Utilizando los datos de la matriz de confusión, utilizamos cómo métrica la \textit{precision} y el \textit{recall}, de cada clase por separado y de media. Al haber más elementos de la clase 1 que de la case 0, nos centramos especialmente en conseguir un modelo con buenos resultados para dicha clase. De esta forma, al seleccionar el modelo, considerábamos un coste muy elevado a clasificar un elemento de la clase 1 como un elemento de la clase 0, mientras el caso contrario tenía un coste mucho más reducido. \\
 
 
 
 \section{Resultados}
 \IEEEPARstart{I}ntroducción
-	\subsection{Datatón URJC 2017}
+	\subsection{SVM}
 	% David
 
-	\subsection{Definición alternativa de clases}
+	\subsection{MLP}
 	% Yo
 
 
@@ -93,14 +112,14 @@ This  research  has  been  partially  sponsored  by  the Community of Madrid thr
 
 \begin{thebibliography}{1}
 
-% \bibitem{IEEEhowto:kopka}
-% H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-%   0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+\bibitem{analisis_datos}
+Figuera, C., Lillo, J. M., Mora-Jimenez, I., Rojo-Álvarez, J. L., \& Caamaño, A. J. (2011, October). \emph{Multivariate spatial clustering of traffic accidents for local profiling of risk factors.} In Intelligent Transportation Systems (ITSC), 2011 14th International IEEE Conference on (pp. 740-745). IEEE.
 
-\bibitem{borja2013}
-Borja Men\'endez and Rubén Salamanqu\'es and Jos\'e M. Ca\~nas, \emph{Programming of a Nao humanoid in Gazebo using Hierarchical FSM}.  Proceedings of XIV Workshop on Physical Agents, WAF-2013, pp 15-22. ISBN: 978-84-695-8319-7. 2013.
+\bibitem{extraccion_datos}
+Mitchell, T. M. (2006). \emph{The discipline of machine learning (Vol. 9).} Carnegie Mellon University, School of Computer Science, Machine Learning Department.
 
-
+\bibitem{alta_dimensionalidad}
+Domingos, P. (2012). \emph{A few useful things to know about machine learning.} Communications of the ACM, 55(10), 78-87.
 
 \end{thebibliography}
 \end{document}
