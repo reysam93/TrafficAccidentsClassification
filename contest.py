@@ -93,11 +93,39 @@ def print_column(tag, X, Y):
         Y0.append(len(np.where(np_y[ii[0]] == 0)[0]))
         Y1.append(len(np.where(np_y[ii[0]] == 1)[0]))
         
-    fig = plt.figure(0)
+    fig = plt.figure()
     class0 = plt.bar(ind, Y0, width, color="y")  
     class1 = plt.bar(ind2, Y1, width, color="r")
     plt.xlabel(tag)
     plt.legend((class0, class1), ("Class 0", "Class 1"))
+
+"""
+Correlation bigger than 75%:
+    - Vehiculos_Implicados Colision_Vehiculos_Marcha 0.764387778947
+    - Interseccion_Tipo Interseccion_Acondicionamiento 0.800050935476
+    - Atropello_1 Atropello_2 0.998164486677
+    - Vuelco_1 Vuelco_2 1.0
+"""
+def remove_correlated(X):
+    corr = X.corr()
+    i = 0
+    j = 0
+    corr_cols = []
+    for col in corr.values:
+        j = 0        
+        for val in col:
+            # if corr > 0.75 -> repeated information
+            if val > 0.75 and val != 1:
+                tag1 = corr.axes[0][i]
+                tag2 = corr.axes[0][j]
+                if corr_cols.count(tag1) == 0 and corr_cols.count(tag2) == 0:
+                    corr_cols.append(tag2)
+                    #print(tag1, tag2, val)
+                
+            j += 1
+        i += 1    
+    
+    X.drop(corr_cols, axis=1, inplace=True)
 
 
 """
@@ -113,8 +141,7 @@ Apparently non-interesting fields:
     - "IMD"
 """
 def analyze_select_data(data, train=True):
-    
-    Y = []
+    Y = []        
     if train:
         # If there are any dead or injured -> class 1
         Y_labels = ["N_Muertos", "N_Graves", "N_Leves"]
@@ -132,19 +159,18 @@ def analyze_select_data(data, train=True):
     else:
         X = data
     
-    # Remove colums with no interest and srting values and nan values
-    rm_cols = ["Id", "Numero_Accidente", "Carretera", "Pk", "Km", "Tipo_Est"]
-    more_rm_cols = ["Arboles_Metros_Calzada", "Colision_Vehiculo_Obstaculo_1",
-                "Colision_Vehiculo_Obstaculo_2", "Dia", "Hora", "Hm",   #65
-                "Sentido", "GPS_z", "IMD"]
-    rm_cols += more_rm_cols
-    X.drop(rm_cols, axis=1, inplace=True)
-    X.fillna(value=0, inplace=True)
-    
     # Uncomment 
     # print_all_data(X,Y) 
-    # print_column("Arboles_Metros_Calzada", X, Y)
-
+    # print_column("Sentido", X, Y)    
+    
+    # Remove colums with no interest and srting values and nan values
+    rm_cols = ["Id", "Numero_Accidente", "Carretera", "Pk", "Km", "Tipo_Est"]
+    rm_cols += ["Arboles_Metros_Calzada", "Colision_Vehiculo_Obstaculo_1",
+                "Colision_Vehiculo_Obstaculo_2", "Dia", "Hora", "Hm",   #65
+                "Sentido", "GPS_z", "IMD"]
+    X.drop(rm_cols, axis=1, inplace=True)
+    X.fillna(value=0, inplace=True)
+    remove_correlated(X)
     return X, Y
 
 
@@ -164,7 +190,7 @@ def mlpSimpleDiv(X, Y):
     # MLP creation + trainning
     scalar = StandardScaler()
     mlp = MLPClassifier(activation="relu", verbose=False, solver="adam",
-                        max_iter=150, hidden_layer_sizes=(3,200), early_stopping=True, 
+                        max_iter=150, hidden_layer_sizes=(50,60), early_stopping=True, 
                         tol=1e-12, validation_fraction=0.2, alpha=1e-4,
                         learning_rate_init=0.1, beta_1=0.3, warm_start=True,
                         random_state=RANDOM_STATE)
@@ -258,7 +284,7 @@ def svmCrossVal(X, Y):
               class_weight="balanced")
     classifier = make_pipeline(undersample, svm)
     pipeline = make_pipeline(scalar, classifier)
-    scores = cross_val_score(pipeline, X, Y, cv=20)
+    scores = cross_val_score(pipeline, X, Y, cv=10, scoring="average_precision")
 
     print(scores)
     print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
@@ -369,19 +395,19 @@ def predictTestData(X_train, Y_train, classifier, scalar):
 if __name__ == "__main__":
     # Read and shuffle data
     train_data = shuffle(pd.read_csv('traindata.csv'), random_state=0)
-    print("Data:", train_data.shape)
+    print("Original data shape:", train_data.shape)
     
     X, Y = analyze_select_data(train_data)
-    print("Shape of X:", X.shape)
-    
+    print("Data shape after analisys:", X.shape)
+    corr = X.corr()
     #classifier, scalar = mlpSimpleDiv(X, Y)
     #classifier, scalar = mlpCrossVal(X, Y)
     #logisticRegr(X,Y)
-    #classifier, scalar = svmCrossVal(X,Y)
+    classifier, scalar = svmCrossVal(X,Y)
     classifier, scalar = svmSimpleVal(X,Y)
     #classifier, scalar = kNeighborsCrossVal(X,Y)
     #clasifier, scalar = kNeighborsSimpleVal(X,Y)
     #pnnTrainTestNoNorm(X, Y)
     #pnnTrainTestNorm(X, Y)
     
-    predictTestData(X, Y, classifier, scalar)
+    #predictTestData(X, Y, classifier, scalar)
