@@ -126,9 +126,33 @@ Finalmente, cuando estuvimos satisfechos con la precisión obtenida con una dete
 \subsection{SVM}
 	% David
 
-\subsection{MLP}
-	% Yo
+% mlp = MLPClassifier(activation="identity", verbose=True,
+%				max_iter=150, hidden_layer_sizes=20, early_stopping=False, 
+%				tol=1e-8, validation_fraction=0.3, alpha=1e-10, 
+%				learning_rate_init=0.0001, beta_1=0.8, warm_start=True) 
 
+\subsection{MLP}
+Hay dos razones principales por las cuales hemos utilizado un MLP para resolver este problema de clasificación. En primer lugar se trata de un estimador universal, por lo que eligiendo la arquitectura adecuada puede utilizarse para resolver cualquier problema, aunque encontrar esta arquitectura suele ser complicado dado que no existe ninguna regla que especifique como debe hacerse, depende de cada situación concreta. La otra razón principal que nos llevó a utilizar este modelo es el amplio rango de parámeros modificables que proporciona la librería sklearn al utilizarlo. Esto proporciona una gran flexibilidad a la hora de entrenar el modelo, aunque hace que sea necesario dedicarle más tiempo para encontrar los parámetros adecuados. Todos los parámetros que pueden seleccionarse para este modelo están descritos en \cite{mlp}. \\
+
+Para resolver este problema nos hemos centrado en determinar el número de capas ocultas, el número de neuronas por cada capa y la función de activación. Además hemos ajustado el valor inicial de la tasa de aprendizaje y la tolerancia. La tolerancia es el valor utilizado para detectar si el algoritmo de optimización ha alcanzado un mínimo. Si la diferencia entre el error de la iteracción anterior y la iteracción actual no supera el valor de la tolerancia, el algoritmo se dentendrá. Hemos utilizado la técnica de \textit{early stopping} e internamente, el algoritmo usará el 30\% de los datos de entrenamiento como conjunto de validación para saber cuando detener el aprendizaje. Adicionalmente, hemos establecido el número máximo de iterciones en 150 y el método Adam como algoritmo para la optimización. Este método está basado en el descenso por gradiente estocástico. Otro parámetro que hemos ajustado es \textit{alpha}, que es el término de regularización. \\
+
+El MLP que mejor resultado nos ha dado utiliza la función identidad como función de activación, una única capa oculta de 20 neuronas, \textit{early stopping}, una tolerancia de 1e-8, la fracción de validación del 30\% de los datos de entrenamiento, alpha con un valor de 1e-10 y el valor inicial de la tasa de aprendizaje de 1e-4. En la tabla \ref{tabla:tabla_mlp} se muestran los valores que hemos obtenido con algunas de las distintas combinaciones de parámetros, incluyendo la que acabamos de explicar. \\
+
+\begin{table}[htb!]
+\begin{center}
+	\begin{tabular}{| p{2cm} | p{2cm} | p{2cm} | p{2cm} |}
+		\hline
+		 & Precisión Clase 0 & Precisión Clase 1 & Precisión Media \\
+		 \hline
+		 Modelo 1111111111 111111111111 & 12 & 11 & 10 \\
+		 \hline
+		 Modelo 2 & 32 & 321 & 345 \\
+		 \hline
+	\end{tabular}
+	\caption{Tabla de ejemplo}
+	\label{tabla:tabla_mlp}
+\end{center}
+\end{table}
 
 \section{Conclusiones}
 % David
@@ -146,6 +170,10 @@ Domingos, P. (2012). \emph{A few useful things to know about machine learning.} 
 
 \bibitem{validacion_cruzada}
 \emph{Cross-validation: evaluating estimator performance} http://scikit-learn.org/stable/modules/cross\_validation.html
+
+\bibitem{mlp}
+\emph{MLP Classifier in scikit-lear.}
+http://scikit-learn.org/stable/modules/generated/sklearn.neural\_network.MLPClassifier.html\#sklearn.neural\_network.MLPClassifier
 
 \end{thebibliography}
 \end{document}
