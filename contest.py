@@ -17,6 +17,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
+from sklearn.base import clone
 
 #from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import cross_val_score
@@ -176,6 +177,43 @@ def analyze_select_data(data, train=True):
 
 """
     MLP network with the 80% if data for training and 20% for validation
+
+    Model 1
+    mlp = MLPClassifier(activation="relu", verbose=False, solver="adam",
+                        max_iter=150, hidden_layer_sizes=(50,3), early_stopping=True, 
+                        tol=1e-12, validation_fraction=0.2, alpha=1e-4,
+                        learning_rate_init=0.1, beta_1=0.3, warm_start=True,
+                        random_state=RANDOM_STATE)
+                        
+    Model 2
+    mlp = MLPClassifier(activation="relu", verbose=False, solver="adam",
+                        max_iter=150, hidden_layer_sizes=(100,3), early_stopping=True, 
+                        tol=1e-12, validation_fraction=0.2, alpha=1e-4,
+                        learning_rate_init=0.1, beta_1=0.3, warm_start=True,
+                        random_state=RANDOM_STATE)
+                        
+    Model 3
+    mlp = MLPClassifier(activation="relu", verbose=False, solver="adam",
+                        max_iter=150, hidden_layer_sizes=(40,3), early_stopping=True, 
+                        tol=1e-12, validation_fraction=0.2, alpha=1e-4,
+                        learning_rate_init=0.1, beta_1=0.3, warm_start=True,
+                        random_state=RANDOM_STATE)
+                        
+    Model 4
+    mlp = MLPClassifier(activation="relu", verbose=False, solver="adam",
+                        max_iter=150, hidden_layer_sizes=(100,1), early_stopping=True, 
+                        tol=1e-12, validation_fraction=0.2, alpha=1e-4,
+                        learning_rate_init=0.1, beta_1=0.3, warm_start=True,
+                        random_state=RANDOM_STATE)
+                        
+    Model 5
+     mlp = MLPClassifier(activation="relu", verbose=False, solver="adam",
+                        max_iter=150, hidden_layer_sizes=(100,3), early_stopping=True, 
+                        tol=1e-12, validation_fraction=0.2, alpha=1e-4,
+                        learning_rate_init=0.1, beta_1=0.3, warm_start=True,
+                        random_state=RANDOM_STATE, learning_rate="adaptive")
+
+    
 """
 def mlpSimpleDiv(X, Y):
     X_train, X_val, Y_train, Y_val = train_test_split(X, Y, train_size=0.8)
@@ -190,19 +228,20 @@ def mlpSimpleDiv(X, Y):
     # MLP creation + trainning
     scalar = StandardScaler()
     mlp = MLPClassifier(activation="relu", verbose=False, solver="adam",
-                        max_iter=150, hidden_layer_sizes=(50,60), early_stopping=True, 
+                        max_iter=150, hidden_layer_sizes=(100,3), early_stopping=True, 
                         tol=1e-12, validation_fraction=0.2, alpha=1e-4,
                         learning_rate_init=0.1, beta_1=0.3, warm_start=True,
-                        random_state=RANDOM_STATE)
-                        
+                        random_state=RANDOM_STATE, learning_rate="adaptive")
+
     undersample = SMOTE()
     classifier = make_pipeline(undersample, mlp)
+    class_clone = clone(classifier)    
     # Prediction and evaluation
     classifier.fit(X_train_n, Y_train)
     prediction = classifier.predict(X_val_n)
     print ("\n", classification_report(prediction, Y_val))
     print("N ones:", len(np.where(prediction == 1)[0])/len(prediction))
-    return classifier, scalar
+    return class_clone, scalar
 
 
 """
@@ -231,10 +270,11 @@ def mlpCrossVal(X, Y):
                         max_iter=150, hidden_layer_sizes=(400,3), early_stopping=True, 
                         tol=1e-12, validation_fraction=0.3, alpha=1e-8,
                         learning_rate_init=0.1, beta_1=0.5, warm_start=True,
-                        random_state=RANDOM_STATE)    
+                        random_state=RANDOM_STATE)  
+                        
     classifier = make_pipeline(undersample, mlp)
     pipeline = make_pipeline(scalar, classifier)
-    scores = cross_val_score(pipeline, X_red, Y, cv=3)
+    scores = cross_val_score(pipeline, X_red, Y, cv=2)
 
     print(scores)
     print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
@@ -382,8 +422,11 @@ def predictTestData(X_train, Y_train, classifier, scalar):
     #X_red_test = ica.transform(X_test)
     Xn_test = scalar.fit_transform(X_test)
     pred = pd.DataFrame(classifier.predict(Xn_test),index=np.arange(1,201))#index=np.arange(1,201)
+    Y_test = pd.read_csv('solution.csv')["Prediction"]
+    print ("score:", classifier.score(Xn_test, Y_test))
+    print ("\n", classification_report(pred, Y_test))
+    
     pred.to_csv("predicted.csv", header=["Prediction"], index_label="Id")
-    #print (classifier.score(Xn_test, Y_test))
     print ("DONE")
 
 
@@ -400,14 +443,14 @@ if __name__ == "__main__":
     X, Y = analyze_select_data(train_data)
     print("Data shape after analisys:", X.shape)
     corr = X.corr()
-    #classifier, scalar = mlpSimpleDiv(X, Y)
+    classifier, scalar = mlpSimpleDiv(X, Y)
     #classifier, scalar = mlpCrossVal(X, Y)
     #logisticRegr(X,Y)
-    classifier, scalar = svmCrossVal(X,Y)
-    classifier, scalar = svmSimpleVal(X,Y)
+    #classifier, scalar = svmCrossVal(X,Y)
+    #classifier, scalar = svmSimpleVal(X,Y)
     #classifier, scalar = kNeighborsCrossVal(X,Y)
     #clasifier, scalar = kNeighborsSimpleVal(X,Y)
     #pnnTrainTestNoNorm(X, Y)
     #pnnTrainTestNorm(X, Y)
-    
-    #predictTestData(X, Y, classifier, scalar)
+
+    predictTestData(X, Y, classifier, scalar)

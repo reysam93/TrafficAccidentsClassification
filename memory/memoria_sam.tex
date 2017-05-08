@@ -21,9 +21,7 @@ E-mail: samuel.rey.escudero@gmail.com, dmorenolumb@gmail.com.es
 
 
 \begin{abstract}
-% Yo
-	
-Resumen
+Los accidentes de tráfico conllevan un gran coste económico y, sobre todo, humano, por lo que existe un gran interés en ser capaces de predecirlos para, en última estancia, poder evitarlos. Aunque esto supone un gran reto, las técnicas de análisis de datos y aprendizaje máquina ofrecen una oportunidad única para comprender las razones subyacentes. En este artículos utilizaremos estas técnicas para clasificar los accidentes en graves o leves, con de objetivo de predecir la gravedad de los accidentes basándonos en algunas de sus características. De esta forma, sabiendo que determina que un accidente pase de ser considerado leve a ser grave, se podrán tomar medidas para reducir la gravedad y, por lo tanto, la mortalidad de los accidentes. Para conseguir esto hemos realiado un análisis de los datos, hemos escogido el modelo más adecuado, lo hemos entrenado y evaluado, explicando con detalle cada uno de estos procedimientos y exponiendo las conclusiones principales a las que hemos llegado.
 \end{abstract}
 
 
@@ -125,31 +123,59 @@ Finalmente, cuando estuvimos satisfechos con la precisión obtenida con una dete
 
 \subsection{SVM}
 	% David
-
-% mlp = MLPClassifier(activation="identity", verbose=True,
-%				max_iter=150, hidden_layer_sizes=20, early_stopping=False, 
-%				tol=1e-8, validation_fraction=0.3, alpha=1e-10, 
-%				learning_rate_init=0.0001, beta_1=0.8, warm_start=True) 
+	
+\begin{table}[htb!]
+	\begin{center}
+		\caption{Resultados de distintos modelos de SVM}
+		\begin{tabular}{| p{2.1cm} | p{1cm} | p{1cm} | p{1cm} | p{1.2cm} |}
+			\hline
+			& Precisión Clase 0 & Precisión Clase 1 & Precisión Media & Puntuación Test   \\ \hline
+			dddddd & 0.37                & 0.86                & 0.74              & 0.765  \\ \hline
+			dddddd & 0.17                & 0.95               & 0.87             & 0.765  \\ \hline
+			dddddd & 0.8 & 0.44 & 0.68 & 0.62 \\ \hline
+			dddddd & 0.22 & 0.92 & 0.81 & 0.75	\\ \hline
+			dddddd 0.1 & 0.22 & 0.92 & 0.81 & 0.75 \\ \hline
+			
+		\end{tabular}
+		
+		\label{tabla:tabla_svm}
+	\end{center}
+\end{table}
 
 \subsection{MLP}
 Hay dos razones principales por las cuales hemos utilizado un MLP para resolver este problema de clasificación. En primer lugar se trata de un estimador universal, por lo que eligiendo la arquitectura adecuada puede utilizarse para resolver cualquier problema, aunque encontrar esta arquitectura suele ser complicado dado que no existe ninguna regla que especifique como debe hacerse, depende de cada situación concreta. La otra razón principal que nos llevó a utilizar este modelo es el amplio rango de parámeros modificables que proporciona la librería sklearn al utilizarlo. Esto proporciona una gran flexibilidad a la hora de entrenar el modelo, aunque hace que sea necesario dedicarle más tiempo para encontrar los parámetros adecuados. Todos los parámetros que pueden seleccionarse para este modelo están descritos en \cite{mlp}. \\
 
-Para resolver este problema nos hemos centrado en determinar el número de capas ocultas, el número de neuronas por cada capa y la función de activación. Además hemos ajustado el valor inicial de la tasa de aprendizaje y la tolerancia. La tolerancia es el valor utilizado para detectar si el algoritmo de optimización ha alcanzado un mínimo. Si la diferencia entre el error de la iteracción anterior y la iteracción actual no supera el valor de la tolerancia, el algoritmo se dentendrá. Hemos utilizado la técnica de \textit{early stopping} e internamente, el algoritmo usará el 30\% de los datos de entrenamiento como conjunto de validación para saber cuando detener el aprendizaje. Adicionalmente, hemos establecido el número máximo de iterciones en 150 y el método Adam como algoritmo para la optimización. Este método está basado en el descenso por gradiente estocástico. Otro parámetro que hemos ajustado es \textit{alpha}, que es el término de regularización. \\
+Para resolver este problema hemos probado múltiples combinaciones de redes neuronales, variando los valores de distitos parámetros. Los parámetros principales que hemos ajustado han sido los siguientes: \\
 
-El MLP que mejor resultado nos ha dado utiliza la función identidad como función de activación, una única capa oculta de 20 neuronas, \textit{early stopping}, una tolerancia de 1e-8, la fracción de validación del 30\% de los datos de entrenamiento, alpha con un valor de 1e-10 y el valor inicial de la tasa de aprendizaje de 1e-4. En la tabla \ref{tabla:tabla_mlp} se muestran los valores que hemos obtenido con algunas de las distintas combinaciones de parámetros, incluyendo la que acabamos de explicar. \\
+\begin{itemize}
+	\item Determinar el número de neuronas de cada capa oculta y el número de capas ocultas.  \\
+	\item La función de activación, eligiendo entre la función identidad, la función sigmoide, la tangente hiperbólica y un RLU. \\
+	\item El valor inicial de la tasa de aprendizaje.  \\
+	\item Hemos probado manteniendo la tasa de aprendizaje fija, tasa de aprendizaje adaptativa o con escalado inverso.  \\
+	\item La tolerancia, que es el valor utilizado para detectar si el algoritmo de optimización ha alcanzado un mínimo. Si la diferencia entre el error de la iteracción anterior y la iteracción actual no supera el valor de la tolerancia, el algoritmo se dentendrá.  \\
+	\item Hemos probado con y sin la técnica de e\textit{early stopping}. Con esta técnica, el algoritmo utiliza un porcentaje del conjunto de entrenamiento como conjunto de validación para comprobar cuando el error en este conjunto alcanza un mínimo y dejar de iterar. Este valor también lo hemos ajustado.   \\
+	\item El número máximo de iteraciones (importante cuando no utilizamos \textit{early stopping}).  \\
+	\item Distintos algoritmos para minimizar el error como lbfgs, descenso por gradiente estocastico y Adam.  \\
+	\item El término de regularización \textit{alpha}.  \\
+\end{itemize}
+
+En la tabla \ref{tabla:tabla_mlp} se muestran los modelos que mejores resultados nos han dado basándonos en redes neuronales, indicando los parámetros que varían entre ellos. Además, todos ellos utilizan como función de activación relu, el método Adam como algoritmo para minimizar el error, un valor de 1-e-12 para la tolerancia, 1e-4 para alfa y una tasa de aprendizaje inicial con un valor de 0.1 y el conjunto de validación para el \textit{early stopping} es el 20\% del conjunto de validación. En esta tabla vemos además que hay dos combinaciones que han obtenido la misma puntuación sobre el conjunto de test.
+
 
 \begin{table}[htb!]
 \begin{center}
-	\begin{tabular}{| p{2cm} | p{2cm} | p{2cm} | p{2cm} |}
+	\caption{Resultados de distintos modelos del MLP}
+	\begin{tabular}{| p{2.1cm} | p{1cm} | p{1cm} | p{1cm} | p{1.2cm} |}
 		\hline
-		 & Precisión Clase 0 & Precisión Clase 1 & Precisión Media \\
-		 \hline
-		 Modelo 1111111111 111111111111 & 12 & 11 & 10 \\
-		 \hline
-		 Modelo 2 & 32 & 321 & 345 \\
-		 \hline
+		         & Precisión Clase 0 & Precisión Clase 1 & Precisión Media & Puntuación Test   \\ \hline
+		capa oculta: (50,3) tasa de aprendizaje: constante & 0.37                & 0.86                & 0.74              & 0.765  \\ \hline
+		capa oculta: (100,3), tasa de apredizaje: constante & 0.17                & 0.95               & 0.87             & 0.765  \\ \hline
+		capa oculta: (40,3), tasa de apredizaje: constante & 0.8 & 0.44 & 0.68 & 0.62 \\ \hline
+		capa oculta: (100,1), tasa de apredizaje: contante & 0.22 & 0.92 & 0.81 & 0.75	\\ \hline
+		capa oculta: (100,3), tasa de apredizaje: adaptativa 0.1 & 0.22 & 0.92 & 0.81 & 0.75 \\ \hline
+ 		
 	\end{tabular}
-	\caption{Tabla de ejemplo}
+	
 	\label{tabla:tabla_mlp}
 \end{center}
 \end{table}
