@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{flushend}
 \usepackage{graphicx}
+\usepackage{array} 
 
 
 \begin{document}
@@ -124,29 +125,29 @@ Finalmente, cuando estuvimos satisfechos con la precisión obtenida con una dete
 
 
 \subsection{MLP}
-Hay dos razones principales por las cuales hemos utilizado un MLP para resolver este problema de clasificación. En primer lugar se trata de un estimador universal, por lo que eligiendo la arquitectura adecuada puede utilizarse para resolver cualquier problema, aunque encontrar esta arquitectura suele ser complicado dado que no existe ninguna regla que especifique como debe hacerse, depende de cada situación concreta. La otra razón principal que nos llevó a utilizar este modelo es el amplio rango de parámeros modificables que proporciona la librería sklearn al utilizarlo. Esto proporciona una gran flexibilidad a la hora de entrenar el modelo, aunque hace que sea necesario dedicarle más tiempo para encontrar los parámetros adecuados. Todos los parámetros que pueden seleccionarse para este modelo están descritos en \cite{mlp}. \\
+Hay dos razones principales por las cuales hemos utilizado un MLP para resolver este problema de clasificación. En primer lugar se trata de un estimador universal, por lo que eligiendo la arquitectura adecuada puede utilizarse para resolver cualquier problema, aunque encontrar esta arquitectura suele ser complicado dado que no existe ninguna regla que especifique como debe hacerse, si no que depende de cada situación concreta. La otra razón principal que nos llevó a utilizar este modelo es el amplio rango de parámeros modificables que proporciona la librería sklearn al utilizarlo. Esto proporciona una gran flexibilidad a la hora de entrenar el modelo, aunque hace que sea necesario dedicarle más tiempo para encontrar los parámetros adecuados. Todos los parámetros que pueden seleccionarse para este modelo están descritos en \cite{mlp}. \\
 
 Para resolver este problema hemos probado múltiples combinaciones de redes neuronales, variando los valores de distitos parámetros. Los parámetros principales que hemos ajustado han sido los siguientes: \\
 
 \begin{itemize}
-	\item Determinar el número de neuronas de cada capa oculta y el número de capas ocultas.  \\
-	\item La función de activación, eligiendo entre la función identidad, la función sigmoide, la tangente hiperbólica y un RLU. \\
+	\item El número de neuronas de cada capa oculta y el número de capas ocultas.  \\
+	\item La función de activación, eligiendo entre la función identidad, la función sigmoide, la tangente hiperbólica y un rectificador linear uniforme (RLU). \\
 	\item El valor inicial de la tasa de aprendizaje.  \\
 	\item Hemos probado manteniendo la tasa de aprendizaje fija, tasa de aprendizaje adaptativa o con escalado inverso.  \\
 	\item La tolerancia, que es el valor utilizado para detectar si el algoritmo de optimización ha alcanzado un mínimo. Si la diferencia entre el error de la iteracción anterior y la iteracción actual no supera el valor de la tolerancia, el algoritmo se dentendrá.  \\
-	\item Hemos probado con y sin la técnica de e\textit{early stopping}. Con esta técnica, el algoritmo utiliza un porcentaje del conjunto de entrenamiento como conjunto de validación para comprobar cuando el error en este conjunto alcanza un mínimo y dejar de iterar. Este valor también lo hemos ajustado.   \\
+	\item Hemos probado con y sin la técnica de \textit{early stopping}. Con esta técnica, el algoritmo utiliza un porcentaje del conjunto de entrenamiento como conjunto de validación para comprobar cuando el error en este conjunto alcanza un mínimo y dejar de iterar. Este valor también lo hemos ajustado.   \\
 	\item El número máximo de iteraciones (importante cuando no utilizamos \textit{early stopping}).  \\
 	\item Distintos algoritmos para minimizar el error como lbfgs, descenso por gradiente estocastico y Adam.  \\
 	\item El término de regularización \textit{alpha}.  \\
 \end{itemize}
 
-En la tabla \ref{tabla:tabla_mlp} se muestran los modelos que mejores resultados nos han dado basándonos en redes neuronales, indicando los parámetros que varían entre ellos. Además, todos ellos utilizan como función de activación relu, el método Adam como algoritmo para minimizar el error, un valor de 1-e-12 para la tolerancia, 1e-4 para alfa y una tasa de aprendizaje inicial con un valor de 0.1 y el conjunto de validación para el \textit{early stopping} es el 20\% del conjunto de validación. En esta tabla vemos además que hay dos combinaciones que han obtenido la misma puntuación sobre el conjunto de test.
+En la tabla \ref{tabla:tabla_mlp} se muestran los modelos que mejores resultados nos han dado basándonos en redes neuronales, indicando los parámetros que varían entre ellos. Además de los valores indicados en dicha tabla, todos ellos utilizan como función de activación un RLU, el método Adam como algoritmo para minimizar el error, un valor de 1·10\textsuperscript{-12} para la tolerancia, 1·10\textsuperscript{-4} para alfa y una tasa de aprendizaje inicial con un valor de 0.1. Además, el conjunto de validación para el \textit{early stopping} es el 20\% del conjunto de entrenamiento. En esta tabla observamos también que hay dos combinaciones que han obtenido la puntuación más alta sobre el conjunto de test, un MLP con 3 capas ocultas y 5 neuronas por cada capa, y otro con 3 capas de 100 neuronas cada una.
 
 
 \begin{table}[htb!]
 	\begin{center}
 		\caption{Resultados de distintos modelos del MLP}
-		\begin{tabular}{| p{2.1cm} | p{1cm} | p{1cm} | p{1cm} | p{1.2cm} |}
+		\begin{tabular}{| m{2.1cm} | m{1cm} | m{1cm} | m{1cm} | m{1.2cm} |}
 			\hline
 			& Precisión Clase 0 & Precisión Clase 1 & Precisión Media & Puntuación Test   \\ \hline
 			capa oculta: (50,3) tasa de aprendizaje: constante & 0.37                & 0.86                & 0.74              & 0.765  \\ \hline
@@ -164,23 +165,23 @@ En la tabla \ref{tabla:tabla_mlp} se muestran los modelos que mejores resultados
 
 \subsection{SVM}
 	
-	Aunque SVM no fue el primero modelo que consideramos, ha resultado ser el que mejor resultados nos ha dado. La principal razón por la que nos inclinamos a utilizarlo fue que, aunque no podemos representar los resultados por trabajar con dimensionalidades demasiado altas, resulta más intuitivo pensar que está pasando al modificar los parámetros. La idea básica del Modelo de Máquinas de Vectores Soporte (SVM) es encontrar el hiperplano óptimo que separe linealmente los datos. Sin embargo, como este conjunto de datos no es linealmente separabe hemos tenido que utilizar el método del kernel, aplicando a los datos una transformación trasladándolos a otro espacio de caractarísticas en el que sí son linealmente separables, de forma que se consigue una separación no lineal en el espacio original. Esta transformación es uno de los parámetros que hemos variado para encontrar la mejor solución al problema. De nuevo, hemos utilizado la librería \textit{sklearn}, y todos los parámetros que pueden seleccionarse para este modelo están descritos en \cite{svm}. \\
+	Aunque SVM no fue el primero modelo que consideramos, ha resultado ser el que mejor resultados nos ha dado. La principal razón por la que nos inclinamos a utilizarlo fue que, aunque no podemos representar los resultados por trabajar con dimensionalidades demasiado altas, resulta más intuitivo pensar que está pasando al modificar los parámetros. La idea básica del Modelo de Máquinas de Vectores Soporte (SVM) es encontrar el hiperplano óptimo que separe linealmente los datos. Sin embargo, como este conjunto de datos no es linealmente separabe hemos tenido que utilizar el método del kernel, aplicando a los datos una transformación trasladándolos a otro espacio de representación en el que sí son linealmente separables, de forma que se consigue una separación no lineal en el espacio original. La función responsable de esta transformación es uno de los parámetros que hemos variado para encontrar la mejor solución al problema. De nuevo, hemos utilizado la librería \textit{sklearn}, y todos los parámetros que pueden seleccionarse para este modelo están descritos en \cite{svm}. \\
 	
 	Al igual que en el caso del MLP, para encontrar el mejor modelo posible hemos probado distintas combinaciones de SVMs, variando el valor de distintos parámetros y comprobando si mejoraba o no el rendimiento. Los principales parámetros que hemos ajustado han sido: \\
 	
 	\begin{itemize} 
-		\item La función kernel a utilizar  para la transformación del espacio. Esto es especialmente importante dado que no se pueden conseguir buenos resultados en una SVM si la transformación no es la adecuada. Las principales funciones que hemos barajado han sido: polinómica de grado variable, rbf (función de bse radial) y sigmoide, siendo la función polinómica la que mejores resultados ha conseguido. \\
+		\item La función kernel a utilizar  para la transformación del espacio. Esto es especialmente importante dado que no se pueden conseguir buenos resultados en una SVM si la transformación no es la adecuada. Las principales funciones que hemos barajado han sido: polinómica variando el grado, rbf (función de bse radial) y sigmoide, siendo la función polinómica la que mejores resultados ha conseguido. \\
 		\item El coste con el que se penalizará los datos clasificados de forma errónea pero dentro de los vectores soporte. Este parámetro también ha sido especialmente importante debido a la gran cantidad de ruido existente en los datos. \\
 		\item  El grado en el caso de estar utilizando una funció polinómica. \\
 		\item El valor de gamma, que se corresponde al radio para la función rbf. \\
 	\end{itemize} 
 
-	Tras probar distintas combinaciones de estos parámetros, las tabla \ref{tabla:tabla_svm} muestra las cominaciones que mejores resultados han dado. En este caso se puede observar que, aunque la mayoría de los resultados son bastante próximos, la combinación que mejor resultado en el conjunto de test ha obtenido ha sido la primera, utilizando un kernel polinómico de grado 3 y un coste de 0.035.
+	Tras probar distintas combinaciones de estos parámetros, las tabla \ref{tabla:tabla_svm} muestra las cominaciones que mejores resultados han dado. En este caso se puede observar que, aunque la mayoría de los resultados son bastante próximos, la combinación que ha obtenido mejores resultados en el conjunto de test ha sido la primera, utilizando un kernel polinómico de grado 3 y un coste de 0.035.
 	
 	\begin{table}[htb!]
 		\begin{center}
 			\caption{Resultados de distintos modelos de SVM}
-			\begin{tabular}{| p{2.1cm} | p{1cm} | p{1cm} | p{1cm} | p{1.2cm} |}
+			\begin{tabular}{| m{2.1cm} | m{1cm} | m{1cm} | m{1cm} | m{1.2cm} |}
 				\hline
 				& Precisión Clase 0 & Precisión Clase 1 & Precisión Media & Puntuación Test   \\ \hline
 				kernel: polinómica, grado: 3, C: 0.035 & 0.14                & 0.97                & 0.9              & 0.78  \\ \hline
@@ -194,7 +195,6 @@ En la tabla \ref{tabla:tabla_mlp} se muestran los modelos que mejores resultados
 			\label{tabla:tabla_svm}
 		\end{center}
 	\end{table}
-	
 
 \section{Conclusiones}
 % David
