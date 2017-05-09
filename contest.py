@@ -218,20 +218,22 @@ def analyze_select_data(data, train=True):
 def mlpSimpleDiv(X, Y):
     X_train, X_val, Y_train, Y_val = train_test_split(X, Y, train_size=0.8)
     #X_red_train = FastICA(n_components=K, whiten=True).fit_transform(X_train, Y)
-   # X_red_val = FastICA(n_components=K, whiten=True).fit_transform(X_val, Y)
+    #X_red_val = FastICA(n_components=K, whiten=True).fit_transform(X_val, Y)
+    #X_red_train = TruncatedSVD(n_components=K).fit_transform(X_train, Y)    
+    #X_red_val = TruncatedSVD(n_components=K).fit_transform(X_val, Y)
     
     # Normalization
     scalar = StandardScaler()
-    X_train_n = scalar.fit_transform(X_train)
-    X_val_n = scalar.fit_transform(X_val)
+    X_train_n = scalar.fit_transform(X_red_train)
+    X_val_n = scalar.fit_transform(X_red_val)
     
     # MLP creation + trainning
     scalar = StandardScaler()
     mlp = MLPClassifier(activation="relu", verbose=False, solver="adam",
-                        max_iter=150, hidden_layer_sizes=(100,3), early_stopping=True, 
+                        max_iter=150, hidden_layer_sizes=(50,3), early_stopping=True, 
                         tol=1e-12, validation_fraction=0.2, alpha=1e-4,
                         learning_rate_init=0.1, beta_1=0.3, warm_start=True,
-                        random_state=RANDOM_STATE, learning_rate="adaptive")
+                        random_state=RANDOM_STATE)
 
     undersample = SMOTE()
     classifier = make_pipeline(undersample, mlp)
@@ -282,11 +284,25 @@ def mlpCrossVal(X, Y):
     
 
 """
-    BEst config:
-     svm = SVC(verbose=True, kernel="poly", decision_function_shape="ovr",
-              random_state=RANDOM_STATE, C=0.035, degree=3,
-              )
-    
+    Model 1 -> concrso!  0.14  0.97   0.9   0.78
+    svm = SVC(verbose=True, kernel="poly", decision_function_shape="ovr",
+              random_state=RANDOM_STATE, C=0.035, degree=3)
+              
+    Model 2         0.17   0.94   0.86   0.77 
+    svm = SVC(verbose=True, kernel="poly", decision_function_shape="ovr",
+              random_state=RANDOM_STATE, C=0.045, degree=3)
+              
+    Model 3         0.12    0.96    0.9     0.765
+    svm = SVC(verbose=True, kernel="poly", decision_function_shape="ovr",
+              random_state=RANDOM_STATE, C=0.025, degree=3)
+              
+    Model 4         0.11    0.96    0.91    0.76
+    svm = SVC(verbose=True, kernel="poly", decision_function_shape="ovr",
+              random_state=RANDOM_STATE, C=0.02, degree=5)
+               
+    Model 5         0.15    0.92    0.84    0.765
+    svm = SVC(verbose=True, kernel="rbf", decision_function_shape=None,
+              random_state=RANDOM_STATE, C=0.35, gamma=0.12)
 """
 def svmSimpleVal(X,Y):
     X_train, X_val, Y_train, Y_val = train_test_split(X, Y, train_size=0.8)
@@ -300,9 +316,8 @@ def svmSimpleVal(X,Y):
     X_val_n = scalar.fit_transform(X_val)
     
     undersample = SMOTE()
-    svm = SVC(verbose=True, kernel="poly", decision_function_shape="ovr",
-              random_state=RANDOM_STATE, C=0.03, degree=3,
-              )#class_weight="balanced"
+    svm = SVC(verbose=True, kernel="rbf", decision_function_shape=None,
+              random_state=RANDOM_STATE, C=0.35, degree=3, gamma=0.12)
               
     classifier = make_pipeline(undersample, svm)
     
@@ -443,11 +458,11 @@ if __name__ == "__main__":
     X, Y = analyze_select_data(train_data)
     print("Data shape after analisys:", X.shape)
     corr = X.corr()
-    classifier, scalar = mlpSimpleDiv(X, Y)
+    #classifier, scalar = mlpSimpleDiv(X, Y)
     #classifier, scalar = mlpCrossVal(X, Y)
     #logisticRegr(X,Y)
     #classifier, scalar = svmCrossVal(X,Y)
-    #classifier, scalar = svmSimpleVal(X,Y)
+    classifier, scalar = svmSimpleVal(X,Y)
     #classifier, scalar = kNeighborsCrossVal(X,Y)
     #clasifier, scalar = kNeighborsSimpleVal(X,Y)
     #pnnTrainTestNoNorm(X, Y)

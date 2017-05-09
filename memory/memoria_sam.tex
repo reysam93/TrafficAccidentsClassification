@@ -21,7 +21,7 @@ E-mail: samuel.rey.escudero@gmail.com, dmorenolumb@gmail.com.es
 
 
 \begin{abstract}
-Los accidentes de tráfico conllevan un gran coste económico y, sobre todo, humano, por lo que existe un gran interés en ser capaces de predecirlos para, en última estancia, poder evitarlos. Aunque esto supone un gran reto, las técnicas de análisis de datos y aprendizaje máquina ofrecen una oportunidad única para comprender las razones subyacentes. En este artículos utilizaremos estas técnicas para clasificar los accidentes en graves o leves, con de objetivo de predecir la gravedad de los accidentes basándonos en algunas de sus características. De esta forma, sabiendo que determina que un accidente pase de ser considerado leve a ser grave, se podrán tomar medidas para reducir la gravedad y, por lo tanto, la mortalidad de los accidentes. Para conseguir esto hemos realiado un análisis de los datos, hemos escogido el modelo más adecuado, lo hemos entrenado y evaluado, explicando con detalle cada uno de estos procedimientos y exponiendo las conclusiones principales a las que hemos llegado.
+Los accidentes de tráfico conllevan un gran coste económico y, sobre todo, humano, por lo que existe un gran interés en ser capaces de predecirlos para, en última instancia, poder evitarlos. Aunque esto supone un gran reto, las técnicas de análisis de datos y aprendizaje máquina ofrecen una oportunidad única para comprender las razones subyacentes que originan estos accidentes. En este artículos utilizaremos estas técnicas para clasificar los accidentes en graves o leves, con de objetivo de predecir la gravedad de los accidentes basándonos en algunas de sus características. De esta forma, sabiendo que determina que un accidente pase de ser considerado leve a ser grave, se podrán tomar medidas para reducir la gravedad y, por lo tanto, la mortalidad de los accidentes. Para conseguir esto hemos realizado un análisis de los datos, hemos comparado distintos modelos y escogido el más adecuado, lo hemos entrenado y evaluado, explicando con detalle cada uno de estos procedimientos y exponiendo las conclusiones principales a las que hemos llegado.
 \end{abstract}
 
 
@@ -32,40 +32,42 @@ Los accidentes de tráfico conllevan un gran coste económico y, sobre todo, hum
 \begin{itemize}
 	\item Las bases de datos son muy grandes y heterogéneas, por lo que habitualmente no se puede trabajar con datos de distintas procedencias. \\
 	
-	\item Los datos son introducidos manualmente por personas, por lo que son propensos a errores o valores inádecuado y a presentar ruido. Sobre este tema se profundiza algo más en el artículo \cite{analisis_datos}. \\
+	\item Los datos son introducidos manualmente por personas, por lo que son propensos a errores o valores inadecuados y a presentar ruido. Este tema se trata en mayor profundidad en el artículo  \cite{analisis_datos}. \\
 
-	\item Las situaciones reales son complejas y sus datos cuentan con un gran número de atributos, por lo que los modelos utilizados para predecir los resultados tienen una gran dimensionalidad y requieren un gran número de ejemplos. \\
+	\item Las situaciones reales son complejas y sus datos cuentan con un gran número de atributos, por lo que habitualmente consisten en problemas de una gran dimensionalidad, requiriendo un gran número de observaciones para poder resolverlos. \\
 	
-	\item Las funciones de coste también suelen ser complejas y altamente no lineales, por lo que es sencillo que el algoritmo e optimización se detenga en un mínimo local. Además, esto ocasiona que el resultado del entrenamiento del modelo dependa en gran medida del punto en el que se inicialicen los pesos al comenzar el entrenamiento. \\
+	\item Las funciones de coste también suelen ser complejas y altamente no lineales, por lo que es sencillo que el algoritmo de optimización se detenga en un mínimo local. Esto además de evitar alcanzar la solución óptima, ocasiona que el resultado del entrenamiento del modelo dependa en gran medida del punto en el que se inicialicen los pesos al comenzar el entrenamiento. \\
 \end{itemize}
 
 % Quitar??
 %La utilidad y a la vez, dificultad que esta situación presenta, así como la actual relevancia que está adquiriendo el campo de análisis de datos y aprendizaje máquina, ha motivado la realización de un datatón y concurso en la universidad Rey Juan Carlos. En este datatón se proporcionarán conocimientos básicos en estas materias así como distintos consejos para abordar el problema, haciendo un ranking de las distintas soluciones obtenidas y premiando las dos primeras. \\
 
-En este artículo, para abordar este problema nos centraremos en predecir la gravedad del accidente, abordándolo como un problema de clasificación binaria. Basándonos en los atributos número de heridos leves, número de heridos graves y número de muertos, las clases que hemos definido son: \\
+En este artículo, para abordar este problema nos centraremos en predecir la gravedad del accidente, abordándolo como un problema de clasificación binaria. Basándonos en los atributos \emph{número de heridos leves}, \emph{número de heridos graves} y \emph{número de muertos}, las clases que hemos definido son: \\
 
 \begin{itemize}
-	\item \textit{Clase 0 - Accidente leve}: consideraremos accidetentes leves todos aquellos en los que no haya ni muertos ni heridos.
-	\item \textit{Clase 1 - Accidente grave}: clasificaremos como accidentes graves aquellos en los que haya habido muertos o heridos, ya sean leves o graves. \\ 
+	\item \textit{Clase 0 - Accidente leve}: consideraremos accidetentes leves todos aquellos en los que no ha habido ni muertos ni heridos. \\
+	\item \textit{Clase 1 - Accidente grave}: clasificaremos como accidentes graves aquellos en los que hahabido muertos o heridos, ya sean leves o graves. \\ 
 \end{itemize}
 
 
 
-Esta definición de clases ha sido establecida por el concurso organizado en el datatón de la universidad Rey Juan Carlos, y la máquina explicada en este artículo ha sido ha sido propuesta como solución. Esto supone una dificultad añadida, dado que el conjunto de test utilizado para evaluar las diferentes máquinas presentadas al concurso tenía las clases desbalanceadas. Aproximadamente el 75\% de elementos del conjunto de tests pertenecían a la clase 1, mientras que sólo el 25\% representaban a la clase 0. Sin embargo, el conjunto de datos de entrenamiento no estaba desbalanceado. En él, el 54\% de las observaciones pertenecían a la clase 1 y el 46\% restante a la clase 0. \\
+Esta definición de clases ha sido establecida por el concurso organizado en el datatón de la universidad Rey Juan Carlos, y la máquina explicada en este artículo ha sido ha sido propuesta como solución. Esto supone una dificultad añadida, dado que el conjunto de test utilizado para evaluar las diferentes máquinas presentadas al concurso tenía las clases desbalanceadas. Aproximadamente el 75\% de elementos del conjunto de test pertenecen a la clase 1, mientras que sólo el 25\% restante representa a la clase 0. Sin embargo, el conjunto de datos de entrenamiento no estaba desbalanceado. En él, el 54\% de las observaciones pertenecían a la clase 1 y el otro 46\% a la clase 0. \\
 
-La base de datos utilizada consta de más de 9000 observaciones, con 83 atributos cada una. Se trata de datos muy ruidosos y de una gran dimensionalidad, algo que resulta especialmente problemático, como se explica en \cite{alta_dimensionalidad}. Además, la mayoría de los atributos son paramétricos, por lo que presenta pocos outliers. Sin embargo, algunos atributos tenían un gran númro de elementos incorrectos. Todo esto hace que sea necesario una primera fase de procesamiento de datos y selección de características antes de elegir y entrenar el modelo, para utilizar tener en cuenta sólo las características que realmente aportan información y ayudan a mejorar el rendimiento de la máquina. Esta fase de análisis de datos es especialmente importante, dado que evita ayuda a evitar sobreaujustes y que el modelo aprenda errores existentes en los datos o incluso el ruido. Cómo se comenta en \cite{extraccion_datos}, un buen análisis previo puede conseguir que un modelo sencillo supere el rendimiento de modelos mucho más complejos. \\
+La base de datos utilizada consta de más de 9000 observaciones, con 83 atributos cada una. Se trata de datos muy ruidosos y de una dimensionalidad elevada, algo que resulta especialmente problemático, como se explica en detalle en \cite{alta_dimensionalidad}. Además, la mayoría de los atributos son paramétricos, por lo que presenta pocos outliers. Sin embargo, algunos atributos presentan un gran número de elementos incorrectos. Todo esto hace que sea necesario una primera fase de procesamiento de datos y selección de características antes de elegir y entrenar el modelo, para tener en cuenta sólo las características que realmente aportan información y ayudan a mejorar el rendimiento de la máquina. Esta fase de análisis de datos es especialmente importante, dado que ayuda a evitar sobreaujustes y que el modelo aprenda errores existentes en los datos, o incluso el propio ruido. Cómo se comenta en \cite{extraccion_datos}, un buen análisis previo ayuda a evitar el sobreajuste favoreciendo la generalización, y puede conseguir que un modelo sencillo supere el rendimiento de modelos mucho más complejos. \\
 
-A continuación, se explicara detalladamente la metodología empleada para resolver el problema. Se explicará en que ha consistido el análisis de datos realizado, los distintos modelos que se han considerado para resolver el problema y las figuras de mérito que hemos considerado. Después, detallaremos los dos modelos que han dado un mejor resultado comentando los parámetros de cada uno, y para finalizar, expondremos las conclusiones a las que hemos llegado después de enfrentarnos a este problema. \\
+A continuación, se explicará detalladamente la metodología empleada para resolver el problema. Se comentará en que ha consistido el análisis de datos realizado, los distintos modelos que se han considerado para resolver el problema y las figuras de mérito que hemos evaluado. Después, detallaremos los dos modelos con los que hemos obtenido un mejor resultado comentando los parámetros de cada uno, y para finalizar, expondremos las conclusiones a las que hemos llegado después de enfrentarnos a este problema. \\
 
 
 %%%%%%%%%% METODOLOGÍA %%%%%%%%%%
 \section{Metodología}
-\IEEEPARstart{P}ara enfrentarnos al problema lo hemos dividido en dos fases distintas. En primer lugar hemos realizado un análisis de datos para solventar datos erróneos y simplificar el problema todo lo posible sin perder información útil. Por otra parte, hemos probado distintos modelos buscando el que mejor se adaptase a los datos consiguiendo mejores resultados. A continuación describiremos estas dos fases en detalle.
+\IEEEPARstart{P}ara enfrentarnos al problema lo hemos dividido en dos fases distintas. En primer lugar hemos realizado un análisis de datos para corregir datos erróneos y simplificar el problema todo lo posible sin perder información útil. Por otra parte, hemos probado distintos modelos buscando el que mejor se adaptase a los datos consiguiendo mejores resultados. A continuación describiremos estas dos fases en detalle.
 
 \subsection{Análisis de datos}
 Al tratarse de datos con una dimensionalidad tan alta y tanto ruido, es imprescindible realizar un buen análisis de los datos y una fase de extracción de características. Para esto, lo primero que hemos hecho ha sido revisar los datos con los que hemos trabajado. De esta forma hemos detectado los atributos que no aportaban información útil para la la clasificación de accidentes, como el \textit{Número de accidente} o el \textit{id}, y los hemos eliminado. Así mismo, hemos detectado atributos en los que más del 90\% de las observaciones tenían un valor de \textit{NaN}, y los hemos elimiado también. Con este primer análisis hemos detectado información repetida. Por ejemplo, los campos \textit{Carretera}, \textit{Km} y \textit{Pk} están ya recogidos en las coordenadas GPS. \\
 
-A continuación, hemos representado cada atributo restante. Al tratarse en su gran mayoría de atributos paramétricos, un gráfico de dispersión no aportaba información. Por lo tanto, hemos utilizado gráficos de barras para visualizar el número de accidentes de cada clase para los distintos valores de los atributos. Con esto, buscábamos encontrar las características que aparentemente no aportasen ningún tipo de información para eleminarlas del conjunto de datos, reduciendo así la dimensionalidad. Sacar estas conclusiones a simple vista no es sencillo y además puede ser erróneo, dado que para algunos atributos podría apreciarse una tendencia al combinarse con otros pero no por separado. Por lo tanto, además de este análisis visual, antes de decidir si borrar o no una característica hemos comparado los resultados obtenidos entrenando la máquina con y sin ella, eliminándola únicamente si no mejoraba el resultado. \\ En la ilustración \ref{fig:graf_tendencia} se muestra un ejemplo de estas gráficas, en la que se observa que la proporción de accidentes en la clase 1 es mayor los sábados y domingos. En contraposición, en la figura \ref{fig:graf_no_tendencia} se muestra un atributo en el que no se observa ninguna tendencia clara.
+A continuación, hemos representado cada atributo restante. Al tratarse en su gran mayoría de atributos paramétricos, un gráfico de dispersión no aportaba información. Por lo tanto, hemos utilizado gráficos de barras para visualizar el número de accidentes de cada clase para los distintos valores de los atributos. Con esto, buscábamos encontrar las características que aparentemente no aportasen ningún tipo de información para eleminarlas del conjunto de datos, reduciendo así la dimensionalidad. Sacar estas conclusiones a simple vista no es sencillo y además puede ser erróneo, dado que para algunos atributos podría apreciarse una tendencia al combinarse con otros pero no por separado. Por lo tanto, además de este análisis visual, antes de decidir si borrar o no una característica hemos comparado los resultados obtenidos entrenando la máquina con y sin ella, eliminándola únicamente si no mejoraba el resultado. \\
+
+En la ilustración \ref{fig:graf_tendencia} se muestra un ejemplo de estas gráficas, en la que se observa que la proporción de accidentes en la clase 1 es mayor los sábados y domingos. En contraposición, en la figura \ref{fig:graf_no_tendencia} se muestra un atributo en el que no se observa ninguna tendencia clara.
 
 \begin{figure}[htb!]
 	\begin{center}
@@ -94,7 +96,7 @@ Al terminar con este proceso de análisis y extracción de características, hem
 	\item Mayor varianza \\
 \end{itemize}
 
-Para cada método hemos probado diferentes valores de K. Sin embargo, en todos los casos el resultado empeoraba al aplicar la extracción de caraterísticas, consiguiendo mejores figuras de mérito al utilizar todos los valores. \\
+Para cada método y modelo hemos probado diferentes valores de K. Sin embargo, en todos los casos el resultado empeoraba al aplicar la extracción de caraterísticas, consiguiendo mejores figuras de mérito al utilizar todos los atributos restantes. \\
 
 \subsection{Selección del modelo}
 Después de la extración de características, el principal problema al que nos hemos enfrentado ha sido elegir el modelo más adecuado para este problema de clasificación. Los modelos considerados han sido los sigientes: \\
@@ -107,40 +109,19 @@ Después de la extración de características, el principal problema al que nos 
 	\item Regresor logístico \\
 \end{itemize} 
 
-Sabiendo que el conjunto de test está desbalanceado, hemos considerado que la exactitud o \textit{accuracy} no era la mejor métrica para evaluar el rendimiento de los modelos, y hemos decidido utilizar la precisión o \textit{precision}. Inicialmente dividimos los datos en 10 grupos y usamos la función \textit{cross\_val\_score} proporcionada por la librería \emph{sk-learn}\cite{validacion_cruzada}, fijándonos en la media y la desviación estándar para comparar los resultados de los distintos modelos. Sin embargo, consideramos que el número de observaciones era suficientemente grande, por lo que finalmente empleamos la división simple para su valuación. De esta forma, además de agilizar el proeceso de evaluación, la información que conseguíamos de cada realización era más detallada. Utilizamos la función \textit{classification\_report}, que basándose en la información de la matriz de confusión ofrece información sobre la precisión, sobre el \textit{recall} y el \textit{F1 score}, de cada clase y en media. \\
+Sabiendo que el conjunto de test está desbalanceado, hemos considerado que la exactitud o \textit{accuracy} no era la mejor métrica para evaluar el rendimiento de los modelos, y hemos decidido utilizar la precisión o \textit{precision}. Inicialmente dividimos los datos en 10 grupos y usamos la función \textit{cross\_val\_score} proporcionada por la librería \emph{sk-learn}\cite{validacion_cruzada}, fijándonos en la media y la desviación estándar para comparar los resultados de los distintos modelos. Sin embargo, consideramos que el número de observaciones del que disponíamos era suficientemente grande, por lo que finalmente empleamos la división simple para su valuación. De esta forma, además de agilizar el proeceso de evaluación, la información que conseguíamos de cada realización era más detallada. Utilizamos la función \textit{classification\_report}, que basándose en la información de la matriz de confusión ofrece información sobre la precisión, sobre el \textit{recall} y el \textit{F1 score}, de cada clase y en media. \\
 
-Para la evaluación de los modelos, el 80\% de los datos disponibles se han utilizado para entrenar el modelo (conjunto de entrenamiento) y el 20\% restante para evaluarlo (conjunto de validación). La separación de estos grupos se ha realizado de forma aleatoria y se ha supuesto que únicamente conocíamos los datos de entrenamiento, tratando el conjunto de validación como el conjunto de test. \\
+Para la evaluación de los modelos, el 80\% de los datos disponibles se han utilizado para entrenar el modelo (conjunto de entrenamiento) y el 20\% restante para evaluarlo (conjunto de validación). La separación de estos grupos se ha realizado de forma aleatoria y se ha supuesto que únicamente conocíamos los datos de entrenamiento, sin utilizar información procedente del conjunto de validación. \\
 
-Después de definir estos conjuntos y el método empleado para la evaluación, empezamos a probar los distintos modelos anteriormente mencionados. Cada uno de estos modelos cuenta con unos parámetros distintos que hay que ajustar para que las prediciones de la máquina sean lo más precisas posibles. Para esto, seleccionamos los valores para los parámetros que consideramos más adecuados, entrenamos la máquina con el conjuto de entrenamiento y evaluamos su rendimiento utilizando el conjunto de validación. Con esta información, reajustamos los valores buscando siempre minimizar el error en el conjunto de validación, no en el de entrenamiento. Además, al haber más muestras de la clase 1 que de la clase 0 en el conjunto de validación, nos centramos sobre todo en conseguir una precisión elevada en la clase 1. De esta forma asumimos costes asimétricos, dado que asignar a una observación la clase 0 cuando en realidad pertenecía a la clase 1 tenía un coste muy alto, mientras que, un falso positivo de la clase 1 no tenía tanto coste. \\
+Después de definir estos conjuntos y el método empleado para la evaluación, empezamos a probar los distintos modelos anteriormente mencionados. Cada uno de estos modelos cuenta con unos parámetros distintos que hay que ajustar para que las prediciones de la máquina sean lo más precisas posibles. Para esto, seleccionamos los valores para los parámetros que consideramos más adecuados probando distintas combinaciones para cada modelo, entrenamos la máquina con el conjuto de entrenamiento y evaluamos su rendimiento utilizando el conjunto de validación. Con esta información, reajustamos los valores buscando siempre minimizar el error en el conjunto de validación, no en el de entrenamiento. Además, al haber más muestras de la clase 1 que de la clase 0 en el conjunto de validación, nos centramos sobre todo en conseguir una precisión elevada en la clase 1. De esta forma asumimos costes asimétricos, dado que asignar a una observación la clase 0 cuando en realidad pertenecía a la clase 1 tenía un coste muy alto, mientras que, un falso positivo de la clase 1 no tenía tanto coste. \\
 
-Finalmente, cuando estuvimos satisfechos con la precisión obtenida con una determinada determinada configuración del modelo, utilizamos el 100\% de los datos para entrenar la máquina, obtenemos las predicciones del conjunto de test y comprobamos los resultados. Teóricamente, con esto añadimos más datos al modelo al estar utilizando todas las observaciones disponibles, por lo que conseguiremos que generalice mejor y se sobreajuste menos a los datos con los que se ha entrenado, obteniendo por lo tanto resultados ligeramente mejores. \\
+Finalmente, cuando estuvimos satisfechos con la precisión obtenida con una determinada configuración del modelo, utilizamos el 100\% de los datos para entrenar la máquina, obtenemos las predicciones del conjunto de test y comprobamos los resultados. Teóricamente, con esto añadimos más datos al modelo al estar utilizando todas las observaciones disponibles, por lo que conseguimos que generalice mejor y se sobreajuste menos a los datos con los que se ha entrenado, obteniendo por lo tanto resultados mejores. \\
 
 
 %%%%%%%%%% RESULTADOS %%%%%%%%%%
 \section{Resultados}
 \IEEEPARstart{E}n este capítulo hemos seleccionado los dos modelos que han dado mejores resultados, de todos los mencionados en el capítulo anterior. Para cada uno de ellos explicaremos la configuración de sus parámetros, las técnicas que hemos utilizado en su aprendizaje y expondremos los resultados que hemos obtenido con ellos.
 
-
-\subsection{SVM}
-	% David
-	
-\begin{table}[htb!]
-	\begin{center}
-		\caption{Resultados de distintos modelos de SVM}
-		\begin{tabular}{| p{2.1cm} | p{1cm} | p{1cm} | p{1cm} | p{1.2cm} |}
-			\hline
-			& Precisión Clase 0 & Precisión Clase 1 & Precisión Media & Puntuación Test   \\ \hline
-			dddddd & 0.37                & 0.86                & 0.74              & 0.765  \\ \hline
-			dddddd & 0.17                & 0.95               & 0.87             & 0.765  \\ \hline
-			dddddd & 0.8 & 0.44 & 0.68 & 0.62 \\ \hline
-			dddddd & 0.22 & 0.92 & 0.81 & 0.75	\\ \hline
-			dddddd 0.1 & 0.22 & 0.92 & 0.81 & 0.75 \\ \hline
-			
-		\end{tabular}
-		
-		\label{tabla:tabla_svm}
-	\end{center}
-\end{table}
 
 \subsection{MLP}
 Hay dos razones principales por las cuales hemos utilizado un MLP para resolver este problema de clasificación. En primer lugar se trata de un estimador universal, por lo que eligiendo la arquitectura adecuada puede utilizarse para resolver cualquier problema, aunque encontrar esta arquitectura suele ser complicado dado que no existe ninguna regla que especifique como debe hacerse, depende de cada situación concreta. La otra razón principal que nos llevó a utilizar este modelo es el amplio rango de parámeros modificables que proporciona la librería sklearn al utilizarlo. Esto proporciona una gran flexibilidad a la hora de entrenar el modelo, aunque hace que sea necesario dedicarle más tiempo para encontrar los parámetros adecuados. Todos los parámetros que pueden seleccionarse para este modelo están descritos en \cite{mlp}. \\
@@ -163,22 +144,57 @@ En la tabla \ref{tabla:tabla_mlp} se muestran los modelos que mejores resultados
 
 
 \begin{table}[htb!]
-\begin{center}
-	\caption{Resultados de distintos modelos del MLP}
-	\begin{tabular}{| p{2.1cm} | p{1cm} | p{1cm} | p{1cm} | p{1.2cm} |}
-		\hline
-		         & Precisión Clase 0 & Precisión Clase 1 & Precisión Media & Puntuación Test   \\ \hline
-		capa oculta: (50,3) tasa de aprendizaje: constante & 0.37                & 0.86                & 0.74              & 0.765  \\ \hline
-		capa oculta: (100,3), tasa de apredizaje: constante & 0.17                & 0.95               & 0.87             & 0.765  \\ \hline
-		capa oculta: (40,3), tasa de apredizaje: constante & 0.8 & 0.44 & 0.68 & 0.62 \\ \hline
-		capa oculta: (100,1), tasa de apredizaje: contante & 0.22 & 0.92 & 0.81 & 0.75	\\ \hline
-		capa oculta: (100,3), tasa de apredizaje: adaptativa 0.1 & 0.22 & 0.92 & 0.81 & 0.75 \\ \hline
- 		
-	\end{tabular}
-	
-	\label{tabla:tabla_mlp}
-\end{center}
+	\begin{center}
+		\caption{Resultados de distintos modelos del MLP}
+		\begin{tabular}{| p{2.1cm} | p{1cm} | p{1cm} | p{1cm} | p{1.2cm} |}
+			\hline
+			& Precisión Clase 0 & Precisión Clase 1 & Precisión Media & Puntuación Test   \\ \hline
+			capa oculta: (50,3) tasa de aprendizaje: constante & 0.37                & 0.86                & 0.74              & 0.765  \\ \hline
+			capa oculta: (100,3), tasa de apredizaje: constante & 0.17                & 0.95               & 0.87             & 0.765  \\ \hline
+			capa oculta: (40,3), tasa de apredizaje: constante & 0.8 & 0.44 & 0.68 & 0.62 \\ \hline
+			capa oculta: (100,1), tasa de apredizaje: contante & 0.22 & 0.92 & 0.81 & 0.75	\\ \hline
+			capa oculta: (100,3), tasa de apredizaje: adaptativa 0.1 & 0.22 & 0.92 & 0.81 & 0.75 \\ \hline
+			
+		\end{tabular}
+		
+		\label{tabla:tabla_mlp}
+	\end{center}
 \end{table}
+
+
+\subsection{SVM}
+	
+	Aunque SVM no fue el primero modelo que consideramos, ha resultado ser el que mejor resultados nos ha dado. La principal razón por la que nos inclinamos a utilizarlo fue que, aunque no podemos representar los resultados por trabajar con dimensionalidades demasiado altas, resulta más intuitivo pensar que está pasando al modificar los parámetros. La idea básica del Modelo de Máquinas de Vectores Soporte (SVM) es encontrar el hiperplano óptimo que separe linealmente los datos. Sin embargo, como este conjunto de datos no es linealmente separabe hemos tenido que utilizar el método del kernel, aplicando a los datos una transformación trasladándolos a otro espacio de caractarísticas en el que sí son linealmente separables, de forma que se consigue una separación no lineal en el espacio original. Esta transformación es uno de los parámetros que hemos variado para encontrar la mejor solución al problema. De nuevo, hemos utilizado la librería \textit{sklearn}, y todos los parámetros que pueden seleccionarse para este modelo están descritos en \cite{svm}. \\
+	
+	Al igual que en el caso del MLP, para encontrar el mejor modelo posible hemos probado distintas combinaciones de SVMs, variando el valor de distintos parámetros y comprobando si mejoraba o no el rendimiento. Los principales parámetros que hemos ajustado han sido: \\
+	
+	\begin{itemize} 
+		\item La función kernel a utilizar  para la transformación del espacio. Esto es especialmente importante dado que no se pueden conseguir buenos resultados en una SVM si la transformación no es la adecuada. Las principales funciones que hemos barajado han sido: polinómica de grado variable, rbf (función de bse radial) y sigmoide, siendo la función polinómica la que mejores resultados ha conseguido. \\
+		\item El coste con el que se penalizará los datos clasificados de forma errónea pero dentro de los vectores soporte. Este parámetro también ha sido especialmente importante debido a la gran cantidad de ruido existente en los datos. \\
+		\item  El grado en el caso de estar utilizando una funció polinómica. \\
+		\item El valor de gamma, que se corresponde al radio para la función rbf. \\
+	\end{itemize} 
+
+	Tras probar distintas combinaciones de estos parámetros, las tabla \ref{tabla:tabla_svm} muestra las cominaciones que mejores resultados han dado. En este caso se puede observar que, aunque la mayoría de los resultados son bastante próximos, la combinación que mejor resultado en el conjunto de test ha obtenido ha sido la primera, utilizando un kernel polinómico de grado 3 y un coste de 0.035.
+	
+	\begin{table}[htb!]
+		\begin{center}
+			\caption{Resultados de distintos modelos de SVM}
+			\begin{tabular}{| p{2.1cm} | p{1cm} | p{1cm} | p{1cm} | p{1.2cm} |}
+				\hline
+				& Precisión Clase 0 & Precisión Clase 1 & Precisión Media & Puntuación Test   \\ \hline
+				kernel: polinómica, grado: 3, C: 0.035 & 0.14                & 0.97                & 0.9              & 0.78  \\ \hline
+				kernel: polinómica, grado: 3, C: 0.045 & 0.17                & 0.94               & 0.86             & 0.77  \\ \hline
+				kernel: polinómica, grado: 3, C: 0.025 & 0.12 & 0.96 & 0.9 & 0.765 \\ \hline
+				kernel: polinómica, grado: 5, C: 0.02 & 0.11 & 0.96 & 0.91 & 0.76	\\ \hline
+				kernel: rbf, gamma: 0.12, C: 0.035 & 0.15 & 0.92 & 0.84 & 0.765 \\ \hline
+				
+			\end{tabular}
+			
+			\label{tabla:tabla_svm}
+		\end{center}
+	\end{table}
+	
 
 \section{Conclusiones}
 % David
@@ -199,7 +215,11 @@ Domingos, P. (2012). \emph{A few useful things to know about machine learning.} 
 
 \bibitem{mlp}
 \emph{MLP Classifier in scikit-lear.}
-http://scikit-learn.org/stable/modules/generated/sklearn.neural\_network.MLPClassifier.html\#sklearn.neural\_network.MLPClassifier
+http://scikit-learn.org/stable/modules/generated/sklearn.neural\_network.MLPClassifier.html
+
+\bibitem{svm}
+\emph{Support Vector Classification}
+http://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
 
 \end{thebibliography}
 \end{document}
