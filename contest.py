@@ -14,6 +14,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
@@ -420,6 +421,48 @@ def logisticRegr(X,Y):
     return scores, lr
 
 
+def decisssionTreeSimpleVal(X,Y):
+    X_train, X_val, Y_train, Y_val = train_test_split(X, Y, train_size=0.8)
+    #ica = FastICA(n_components=K, whiten=True).fit(X_train, Y)
+    #X_red_train = ica.transform(X_train)
+    #X_red_val = ica.transform(X_val)
+    
+    # Normalization
+    scalar = StandardScaler()
+    X_train_n = scalar.fit_transform(X_train)
+    X_val_n = scalar.fit_transform(X_val)
+    
+    undersample = SMOTE()
+    tree = DecisionTreeClassifier(criterion="gini", splitter="best", max_depth=5,
+                                 random_state=RANDOM_STATE, presort=True)
+              
+    classifier = make_pipeline(undersample, tree)
+    
+    # Prediction and evaluation
+    classifier.fit(X_train_n, Y_train)
+    prediction = classifier.predict(X_val_n)
+    print ("\n", classification_report(prediction, Y_val))
+    print("N ones:", len(np.where(prediction == 1)[0])/len(prediction))    
+    return classifier, scalar
+
+
+def decissionTreeCrossVal(X, Y):
+    #X_red = FastICA(n_components=K, whiten=True).fit_transform(X, Y)
+    
+    scalar = StandardScaler()
+    undersample = SMOTE()
+    tree = DecisionTreeClassifier(criterion="gini", splitter="best", 
+                                 random_state=RANDOM_STATE, presort=True)
+    classifier = make_pipeline(undersample, tree)
+    pipeline = make_pipeline(scalar, classifier)
+    scores = cross_val_score(pipeline, X, Y, cv=10, scoring="average_precision")
+
+    print(scores)
+    print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+    return classifier, scalar
+    
+    
+
 """
     The selected classfier fits all the train data.
     As we are using more data, the accuracy should be better than the obtained
@@ -462,10 +505,12 @@ if __name__ == "__main__":
     #classifier, scalar = mlpCrossVal(X, Y)
     #logisticRegr(X,Y)
     #classifier, scalar = svmCrossVal(X,Y)
-    classifier, scalar = svmSimpleVal(X,Y)
+    #classifier, scalar = svmSimpleVal(X,Y)
     #classifier, scalar = kNeighborsCrossVal(X,Y)
     #clasifier, scalar = kNeighborsSimpleVal(X,Y)
     #pnnTrainTestNoNorm(X, Y)
     #pnnTrainTestNorm(X, Y)
+    classifier, scalar = decisssionTreeSimpleVal(X, Y)
+    #classifier, scalar = decissionTreeCrossVal(X, Y)
 
     predictTestData(X, Y, classifier, scalar)

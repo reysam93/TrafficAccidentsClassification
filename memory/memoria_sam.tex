@@ -103,11 +103,12 @@ Para cada método y modelo hemos probado diferentes valores de K. Sin embargo, e
 Después de la extración de características, el principal problema al que nos hemos enfrentado ha sido elegir el modelo más adecuado para este problema de clasificación. Los modelos considerados han sido los sigientes: \\
 
 \begin{itemize}
-	\item MLP
-	\item SVM
+	\item \textit{Multilayer Perceptron} - MLP
+	\item \textit{Support Vector Machine} - SVM
 	\item K-vecinos
-	\item PNN
-	\item Regresor logístico \\
+	\item \textit{Probabilistic Neuronal Network} - PNN
+	\item Regresor logístico
+	\item Árboles de decisión \\
 \end{itemize} 
 
 Sabiendo que el conjunto de test está desbalanceado, hemos considerado que la exactitud o \textit{accuracy} no era la mejor métrica para evaluar el rendimiento de los modelos, y hemos decidido utilizar la precisión o \textit{precision}. Inicialmente dividimos los datos en 10 grupos y usamos la función \textit{cross\_val\_score} proporcionada por la librería \emph{sk-learn}\cite{validacion_cruzada}, fijándonos en la media y la desviación estándar para comparar los resultados de los distintos modelos. Sin embargo, consideramos que el número de observaciones del que disponíamos era suficientemente grande, por lo que finalmente empleamos la división simple para su valuación. De esta forma, además de agilizar el proeceso de evaluación, la información que conseguíamos de cada realización era más detallada. Utilizamos la función \textit{classification\_report}, que basándose en la información de la matriz de confusión ofrece información sobre la precisión, sobre el \textit{recall} y el \textit{F1 score}, de cada clase y en media. \\
