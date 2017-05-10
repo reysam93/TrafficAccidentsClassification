@@ -317,8 +317,8 @@ def svmSimpleVal(X,Y):
     X_val_n = scalar.fit_transform(X_val)
     
     undersample = SMOTE()
-    svm = SVC(verbose=True, kernel="rbf", decision_function_shape=None,
-              random_state=RANDOM_STATE, C=0.35, degree=3, gamma=0.12)
+    svm = SVC(verbose=True, kernel="poly", decision_function_shape="ovr",
+              random_state=RANDOM_STATE, C=0.035, degree=3, gamma=1/61)
               
     classifier = make_pipeline(undersample, svm)
     
@@ -505,12 +505,12 @@ if __name__ == "__main__":
     #classifier, scalar = mlpCrossVal(X, Y)
     #logisticRegr(X,Y)
     #classifier, scalar = svmCrossVal(X,Y)
-    #classifier, scalar = svmSimpleVal(X,Y)
+    classifier, scalar = svmSimpleVal(X,Y)
     #classifier, scalar = kNeighborsCrossVal(X,Y)
     #clasifier, scalar = kNeighborsSimpleVal(X,Y)
     #pnnTrainTestNoNorm(X, Y)
     #pnnTrainTestNorm(X, Y)
-    classifier, scalar = decisssionTreeSimpleVal(X, Y)
+    #classifier, scalar = decisssionTreeSimpleVal(X, Y)
     #classifier, scalar = decissionTreeCrossVal(X, Y)
 
     predictTestData(X, Y, classifier, scalar)
